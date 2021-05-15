@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.bakrin.fblive"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    flavorDimensions "versionCode"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+//    productFlavors {
+//        qa {
+//            versionNameSuffix "-qa"
+//            buildConfigField "String", "API_URL", "\"https://api-football-v1.p.rapidapi.com/\""
+//        }
+//        prod {
+//            buildConfigField "String", "API_URL", "\"https://api-football-v1.p.rapidapi.com/\""
+//        }
+//
+//
+//    }
+
+}
+
+dependencies {
+
+//    def room_version = "1.1.1"
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    implementation "com.pdfview:pdfview-android:1.0.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.google.android.material:material:1.4.0-alpha02'
+
+//    implementation 'com.github.ar-android:AndroidSvgLoader:1.0.0'
+    implementation 'com.github.ar-android:AndroidSvgLoader:1.0.2'
+
+    implementation 'com.vivekkaushik.datepicker:datePickerTimeline:0.0.4'
+//    implementation "android.arch.persistence.room:runtime:$room_version"
+
+    implementation 'com.google.firebase:firebase-analytics:18.0.3'
+
+    // Add the Firebase Crashlytics SDK.
+    implementation 'com.google.firebase:firebase-crashlytics:17.4.1'
+
+    testImplementation 'junit:junit:4.13.2'
+
+//    testImplementation "android.arch.persistence.room:testing:$room_version"
+
+    implementation('com.google.firebase:firebase-core:18.0.3') {
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
+    implementation 'com.google.firebase:firebase-storage:19.2.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+//    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation 'com.google.firebase:firebase-core:18.0.3'
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
+    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.pusher:push-notifications-android:1.6.2'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+}

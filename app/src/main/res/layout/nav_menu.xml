@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="20dp"
+    android:layout_marginLeft="20dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/feedbackTextView"
+        style="@style/Label01_Multi_Line"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/text_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Us Feedback" />
+
+
+    <TextView
+        android:id="@+id/termsTextView"
+        style="@style/Label01_Multi_Line"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/text_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Term of use" />
+
+    <TextView
+        android:id="@+id/privacyTextView"
+        style="@style/Label01_Multi_Line"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/text_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Privacy Policy" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/Label01_Multi_Line"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/text_blue"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Version" />
+
+        <TextView
+            android:id="@+id/versionTextView"
+            style="@style/Label01_Multi_Line"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/text_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/rateTextView"
+        style="@style/Label01_Multi_Line"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/text_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rate this App" />
+</LinearLayout>

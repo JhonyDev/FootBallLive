@@ -1,0 +1,226 @@
+<resources>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- Base application theme. -->
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
+    <style name="SplashThemeMain" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/toBar</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+<!--    <style name="HomeTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
+<!--        &lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+<!--        <item name="colorPrimaryDark">@color/bg_gray_footer</item>-->
+<!--        <item name="android:windowBackground">@color/bg_gray</item>-->
+<!--        <item name="colorAccent">@color/orange_main</item>-->
+<!--&lt;!&ndash;        <item name="android:fontFamily">@font/circularstd_book</item>&ndash;&gt;-->
+<!--&lt;!&ndash;        <item name="titleTextAppearance">@style/FontFamily</item>&ndash;&gt;-->
+<!--    </style>-->
+
+
+    <style name="Header01">
+        <item name="android:textSize">24sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Header01_Home_currency">
+        <item name="android:textSize">26sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Header01_01">
+        <item name="android:textSize">20sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="goal">
+        <item name="android:textSize">35sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+    <style name="Main_header">
+        <item name="android:textSize">35sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Header02">
+        <item name="android:textSize">18sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Header03">
+        <item name="android:textSize">16sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+    </style>
+
+    <style name="Header04">
+        <item name="android:textSize">14sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+<!--    <style name="Paragraph01">-->
+<!--        <item name="android:textSize">14sp</item>-->
+<!--        <item name="android:lineSpacingExtra">2dp</item>-->
+<!--        <item name="android:textColor">@color/text_gray</item>-->
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+<!--    </style>-->
+
+    <style name="Label01">
+        <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label02">
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label02_Multi_Line">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label03">
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label03_Multi_Line">
+        <item name="android:textSize">12sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label04">
+        <item name="android:textSize">10sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label04_multi_line">
+        <item name="android:textSize">10sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label05_multi_line">
+        <item name="android:textSize">8sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Label01_Multi_Line">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="ActionbarText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="FooterMenu">
+        <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Button01">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:buttonStyle">?android:attr/borderlessButtonStyle</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Button02">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:buttonStyle">?android:attr/borderlessButtonStyle</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Button03">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:buttonStyle">?android:attr/borderlessButtonStyle</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="Button04">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:buttonStyle">?android:attr/borderlessButtonStyle</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="EditText01">
+        <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="EditText02">
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="EditText03">
+        <item name="android:textSize">12sp</item>
+        <item name="android:singleLine">true</item>
+<!--        <item name="android:fontFamily">@font/circularstd_book</item>-->
+<!--        <item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+    <style name="progress_bar" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:fontFamily">@font/circularstd_book</item>-->
+        <!--<item name="titleTextAppearance">@style/FontFamily</item>-->
+    </style>
+
+</resources>

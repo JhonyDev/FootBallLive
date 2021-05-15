@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey_light"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:clickable="false"
+        android:text="Get live alerts on this match"
+        android:textColor="#403F3F"
+        android:textSize="15sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chose alerts to receive for this match"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:rotation="90"
+            android:text=">"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/full_time_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Time Result"
+                android:textSize="17sp" />
+
+            <CheckBox
+                android:id="@+id/half_time_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Half Time Result"
+                android:textSize="17sp" />
+
+            <CheckBox
+                android:id="@+id/red_cards"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Red Cards"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <CheckBox
+                android:id="@+id/goals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Goals"
+                android:textSize="17sp" />
+
+            <CheckBox
+                android:id="@+id/kick_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kick Off"
+                android:textSize="17sp" />
+
+            <CheckBox
+                android:id="@+id/yellow_cards"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="yellow Cards"
+                android:textSize="17sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>
