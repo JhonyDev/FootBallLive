@@ -39,6 +39,19 @@ public class NotificationPriority {
         notificationId = UUID.randomUUID().toString();
     }
 
+    public NotificationPriority(int fixtureId, int fullTimeResultInt,
+                                int halfTimeResultInt, int kickOffInt, int redCardsInt,
+                                int yellowCardsInt, int goalsInt) {
+        this.fixtureId = fixtureId;
+        this.fullTimeResultInt = fullTimeResultInt;
+        this.halfTimeResultInt = halfTimeResultInt;
+        this.kickOffInt = kickOffInt;
+        this.redCardsInt = redCardsInt;
+        this.yellowCardsInt = yellowCardsInt;
+        this.goalsInt = goalsInt;
+        notificationId = UUID.randomUUID().toString();
+    }
+
     public String getUserId() {
         return userId;
     }

@@ -1,6 +1,7 @@
 package com.bakrin.fblive.adapter;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bakrin.fblive.R;
 import com.bakrin.fblive.listener.PointTableItemSelectListener;
-import com.bakrin.fblive.model.Pojo.PointTableItem;
+import com.bakrin.fblive.model.response.PointTableItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

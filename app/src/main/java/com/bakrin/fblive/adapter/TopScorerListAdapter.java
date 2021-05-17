@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bakrin.fblive.R;
 import com.bakrin.fblive.listener.TopScorerSelectListener;
-import com.bakrin.fblive.model.Pojo.TopScorerItem;
+import com.bakrin.fblive.model.response.TopScorerItem;
 
 import java.util.ArrayList;
 

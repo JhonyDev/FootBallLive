@@ -25,12 +25,11 @@ import com.bakrin.fblive.db.table.FixtureTable;
 import com.bakrin.fblive.db.table.NotificationPriorityTable;
 import com.bakrin.fblive.info.Info;
 import com.bakrin.fblive.listener.FixtureItemSelectListener;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.models.NotificationPriority;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.NotificationPriority;
 import com.bakrin.fblive.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -150,10 +149,11 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
                     if (DateUtils.isToday(api.getTime())) {
                         holder.dateTextView.setText("Today");
+                        holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_gray));
                     } else {
                         holder.dateTextView.setText(fmtShow.format(api));
+                        holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_gray));
                     }
-                    holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_gray));
                 } else {
                     if (dataBean.statusShort.equalsIgnoreCase("CANC") ||
                             dataBean.statusShort.equalsIgnoreCase("PST") ||
@@ -182,23 +182,29 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
             e.printStackTrace();
         }
         holder.mainLinearLayout.setTag(position);
-        holder.mainLinearLayout.setOnClickListener(view -> {
-            if (listener != null) {
+        holder.mainLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
 
-                int pos = (int) view.getTag();
-                if (!dataList.get(pos).statusShort.equalsIgnoreCase("CANC")) {
-                    listener.onFixtureSelect(pos, dataList.get(pos), Actions.VIEW);
+                    int pos = (int) view.getTag();
+                    if (!dataList.get(pos).statusShort.equalsIgnoreCase("CANC")) {
+                        listener.onFixtureSelect(pos, dataList.get(pos), Actions.VIEW);
+                    }
                 }
             }
         });
 
 
         holder.refreshImageView.setTag(position);
-        holder.refreshImageView.setOnClickListener(view -> {
-            if (listener != null) {
+        holder.refreshImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
 
-                int pos = (int) view.getTag();
-                listener.onFixtureSelect(pos, dataList.get(pos), Actions.REFRESH);
+                    int pos = (int) view.getTag();
+                    listener.onFixtureSelect(pos, dataList.get(pos), Actions.REFRESH);
+                }
             }
         });
 
@@ -398,104 +404,12 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
                     && goalsInt == 0) {
                 holder.notificationBellIcon.setBackgroundResource(R.drawable.notifications_disabled);
                 notificationPriorityTable.deleteFixture(dataList.get(position).getFixtureId());
-                NotificationPriority notificationPriority = new NotificationPriority(
-                        Utils.getIdInSharedPrefs(context),
-                        dataList.get(position).getFixtureId(),
-                        fullTimeResultInt,
-                        halfTimeResultInt,
-                        kickOffInt,
-                        redCardsInt,
-                        yellowCardsInt,
-                        goalsInt
-
-                );
-
-                if (!Utils.getIdInSharedPrefs(context).equals(NO_ID)) {
-                    Toast.makeText(context, "Posting user Id", Toast.LENGTH_SHORT).show();
-                    APIManager.getRetrofit()
-                            .create(APIService.class)
-                            .postFixtureItem(notificationPriority)
-                            .enqueue(new Callback<NotificationPriority>() {
-                                @Override
-                                public void onResponse(@NotNull Call<NotificationPriority> call, @NotNull Response<NotificationPriority> response) {
-                                    if (response.isSuccessful()) {
-                                        Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
-                                        Log.i(TAG, "onResponse: " + response.message());
-                                    }
-
-                                }
-
-                                @Override
-                                public void onFailure(@NotNull Call<NotificationPriority> call, @NotNull Throwable t) {
-                                    Toast.makeText(context, "Error communicating server", Toast.LENGTH_SHORT).show();
-                                    Log.i(TAG, "onFailure: " + t.getMessage());
-                                    Log.i(TAG, "onFailure: " + t.getCause());
-                                }
-                            });
-                }
 
             } else {
                 try {
-                    notificationPriorityTable.deleteFixture(
-                            dataList.get(position).getFixtureId()
-                    );
-
-
-                    notificationPriorityTable.insertFixture(
-                            dataList.get(position).getFixtureId(),
-                            fullTimeResultInt,
-                            halfTimeResultInt,
-                            kickOffInt,
-                            redCardsInt,
-                            yellowCardsInt,
-                            goalsInt
-
-                    );
-
-
-                    NotificationPriority notificationPriority = new NotificationPriority(
-                            Utils.getIdInSharedPrefs(context),
-                            dataList.get(position).getFixtureId(),
-                            fullTimeResultInt,
-                            halfTimeResultInt,
-                            kickOffInt,
-                            redCardsInt,
-                            yellowCardsInt,
-                            goalsInt
-
-                    );
-
-                    Log.i(TAG, "setPopUpWindow: should post to server");
-                    Log.i(TAG, "setPopUpWindow: " + Utils.getIdInSharedPrefs(context));
-                    if (!Utils.getIdInSharedPrefs(context).equals(NO_ID)) {
-                        Toast.makeText(context, "Posting user Id", Toast.LENGTH_SHORT).show();
-                        APIManager.getRetrofit()
-                                .create(APIService.class)
-                                .postFixtureItem(notificationPriority)
-                                .enqueue(new Callback<NotificationPriority>() {
-                                    @Override
-                                    public void onResponse(@NotNull Call<NotificationPriority> call, @NotNull Response<NotificationPriority> response) {
-                                        Log.i(TAG, "onResponse: " + response.body());
-                                        Log.i(TAG, "onResponse: " + response.message());
-                                        Log.i(TAG, "onResponse: " + response.errorBody());
-                                        Log.i(TAG, "onResponse: " + response.code());
-                                        Log.i(TAG, "onResponse: " + response.raw());
-                                        if (response.isSuccessful()) {
-                                            Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
-                                            Log.i(TAG, "onResponse: " + response.message());
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(@NotNull Call<NotificationPriority> call, @NotNull Throwable t) {
-                                        Toast.makeText(context, "Error communicating server", Toast.LENGTH_SHORT).show();
-                                        Log.i(TAG, "onFailure: " + t.getMessage());
-                                        Log.i(TAG, "onFailure: " + t.getCause());
-                                    }
-                                });
-                    }
-
+                    notificationPriorityTable.deleteFixture(dataList.get(position).getFixtureId());
+                    notificationPriorityTable.insertFixture(dataList.get(position).getFixtureId(),
+                            fullTimeResultInt, halfTimeResultInt, kickOffInt, redCardsInt, yellowCardsInt, goalsInt);
                     Log.i(TAG, "setPopUpWindow: inserted");
                 } catch (Exception e) {
                     Toast.makeText(context, "Error updating", Toast.LENGTH_SHORT).show();
@@ -505,7 +419,45 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
                 holder.notificationBellIcon.setBackgroundResource(R.drawable.notificications_enabled);
             }
+            NotificationPriority notificationPriority = new NotificationPriority(
+                    Utils.getIdInSharedPrefs(context),
+                    dataList.get(position).getFixtureId(),
+                    fullTimeResultInt,
+                    halfTimeResultInt,
+                    kickOffInt,
+                    redCardsInt,
+                    yellowCardsInt,
+                    goalsInt
 
+            );
+            if (!Utils.getIdInSharedPrefs(context).equals(NO_ID)) {
+                Toast.makeText(context, "Posting user Id", Toast.LENGTH_SHORT).show();
+                APIManager.getRetrofit()
+                        .create(APIService.class)
+                        .postFixtureItem(notificationPriority)
+                        .enqueue(new Callback<NotificationPriority>() {
+                            @Override
+                            public void onResponse(Call<NotificationPriority> call, Response<NotificationPriority> response) {
+                                Log.i(TAG, "onResponse: " + response.body());
+                                Log.i(TAG, "onResponse: " + response.message());
+                                Log.i(TAG, "onResponse: " + response.errorBody());
+                                Log.i(TAG, "onResponse: " + response.code());
+                                Log.i(TAG, "onResponse: " + response.raw());
+                                if (response.isSuccessful()) {
+                                    Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
+                                    Log.i(TAG, "onResponse: " + response.message());
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<NotificationPriority> call, Throwable t) {
+                                Toast.makeText(context, "Error communicating server", Toast.LENGTH_SHORT).show();
+                                Log.i(TAG, "onFailure: " + t.getMessage());
+                                Log.i(TAG, "onFailure: " + t.getCause());
+                            }
+                        });
+            }
             Log.i(TAG, "setPopUpWindow: Data Should be written");
         });
 
@@ -562,7 +514,6 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
 
     }
-
 
     @Override
     public int getItemCount() {

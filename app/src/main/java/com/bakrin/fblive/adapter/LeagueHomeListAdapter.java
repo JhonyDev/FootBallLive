@@ -1,6 +1,7 @@
 package com.bakrin.fblive.adapter;
 
 import android.app.Activity;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,14 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bakrin.fblive.R;
+import com.bakrin.fblive.listener.FixtureItemSelectListener;
 import com.bakrin.fblive.listener.LeagueHomeItemSelectListener;
-import com.bakrin.fblive.model.Pojo.LeagueListItem;
+import com.bakrin.fblive.model.response.Country;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.LeagueListItem;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,9 +1,8 @@
 package com.bakrin.fblive.info;
 
 public interface Info {
-    String TAG = "tag";
-    String CHANNEL_ID = "notificationChannel";
-    String CHANNEL_ID_1 = "notificationChannel1";
+    String TAG = "///";
+    String CHANNEL_ID_1 = "notificationChannel";
     String CHANNEL_ID_2 = "notificationChannel2";
     String CHANNEL_ID_3 = "notificationChannel3";
     String CHANNEL_ID_4 = "notificationChannel4";

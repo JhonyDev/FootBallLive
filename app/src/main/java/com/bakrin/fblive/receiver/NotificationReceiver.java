@@ -17,8 +17,8 @@ import com.bakrin.fblive.action.DialogType;
 import com.bakrin.fblive.activity.FixtureDetailsActivity;
 import com.bakrin.fblive.api.APIManager;
 import com.bakrin.fblive.info.Info;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.Pojo.LiveFixtureResponse;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.LiveFixtureResponse;
 import com.bakrin.fblive.ui.CustomDialog;
 import com.bakrin.fblive.utils.InternetConnection;
 

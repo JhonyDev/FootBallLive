@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bakrin.fblive.R;
 import com.bakrin.fblive.listener.LeagueHomeItemSelectListener;
-import com.bakrin.fblive.model.Pojo.LeagueListItem;
+import com.bakrin.fblive.model.response.LeagueListItem;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;

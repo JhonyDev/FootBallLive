@@ -1,7 +1,7 @@
 package com.bakrin.fblive.listener;
 
 import com.bakrin.fblive.action.Actions;
-import com.bakrin.fblive.model.Pojo.Country;
+import com.bakrin.fblive.model.response.Country;
 
 public interface CountrySelectListener {
 

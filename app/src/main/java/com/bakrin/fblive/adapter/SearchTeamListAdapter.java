@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bakrin.fblive.R;
 import com.bakrin.fblive.action.Actions;
 import com.bakrin.fblive.listener.HomeTeamSelectListener;
-import com.bakrin.fblive.model.Pojo.Team;
+import com.bakrin.fblive.model.response.Team;
 import com.bakrin.fblive.utils.Utils;
 import com.squareup.picasso.Picasso;
 

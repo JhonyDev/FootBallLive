@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bakrin.fblive.R;
-import com.bakrin.fblive.model.Pojo.FixtureStatEvent;
+import com.bakrin.fblive.model.response.FixtureStatEvent;
 
 import java.util.ArrayList;
 

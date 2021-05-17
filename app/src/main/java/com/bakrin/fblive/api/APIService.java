@@ -1,23 +1,25 @@
 package com.bakrin.fblive.api;
 
 
-import com.bakrin.fblive.model.Pojo.CountryResponse;
-import com.bakrin.fblive.model.Pojo.CreatedUser;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.Pojo.H2HResponse;
-import com.bakrin.fblive.model.Pojo.LeagueListResponse;
-import com.bakrin.fblive.model.Pojo.LeagueTableResponse;
-import com.bakrin.fblive.model.Pojo.LiveFixtureResponse;
-import com.bakrin.fblive.model.Pojo.StatsResponse;
-import com.bakrin.fblive.model.Pojo.TeamSearchResponse;
-import com.bakrin.fblive.model.Pojo.TopScorerResponse;
-import com.bakrin.fblive.model.models.NotificationPriority;
+import com.bakrin.fblive.model.response.CountryResponse;
+import com.bakrin.fblive.model.response.Events;
+import com.bakrin.fblive.model.response.H2HResponse;
+import com.bakrin.fblive.model.response.LeagueListResponse;
+import com.bakrin.fblive.model.response.LeagueTableResponse;
+import com.bakrin.fblive.model.response.LiveFixtureResponse;
+import com.bakrin.fblive.model.response.NotificationPriority;
+import com.bakrin.fblive.model.response.StatsResponse;
+import com.bakrin.fblive.model.response.TeamSearchResponse;
+import com.bakrin.fblive.model.response.TopScorerResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface APIService {
 
@@ -72,10 +74,12 @@ public interface APIService {
 //    @GET("/v2/fixtures/h2h/{homeId}/{awayId}")
     Call<H2HResponse> getH2H(@Path("homeId") int homeId, @Path("awayId") int awayId);
 
-    @POST("api/post_user_id")
-    Call<CreatedUser> postUserId(@Body CreatedUser createdUser);
+    //TODO: RECEIVE NOTIFICATION DATA HERE
+
+    @GET("events/{id}")
+//    @GET("/v2/fixtures/id/{id}")
+    Call<Events> getEvents(@Path("id") int fixtureId);
 
     @POST("api/post_notification_priority")
     Call<NotificationPriority> postFixtureItem(@Body NotificationPriority fixtureItem);
-
 }

@@ -7,7 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.bakrin.fblive.db.DatabaseHelper;
-import com.bakrin.fblive.model.Pojo.Team;
+import com.bakrin.fblive.model.response.Team;
 import com.bakrin.fblive.utils.Utils;
 
 import java.util.ArrayList;

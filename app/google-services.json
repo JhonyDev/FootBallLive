@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "423543563225",
-    "project_id": "football-live-117ab",
-    "storage_bucket": "football-live-117ab.appspot.com"
+    "project_number": "44513076115",
+    "project_id": "football-11cf0",
+    "storage_bucket": "football-11cf0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:423543563225:android:8e6efbeaba6ca1e7acefc8",
+        "mobilesdk_app_id": "1:44513076115:android:1cf5637f54e1ac4f327e66",
         "android_client_info": {
           "package_name": "com.bakrin.fblive"
         }
       },
       "oauth_client": [
         {
-          "client_id": "423543563225-4kcs33igf6nkmbbkiu5qaeah1bhauea4.apps.googleusercontent.com",
+          "client_id": "44513076115-9e0iokud7kditbbc2pi1o36afk0cfd15.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB_Yi13n4eXDwhu3NypCS1U969Lk_gPiLg"
+          "current_key": "AIzaSyCQxn_bLCYtWEFfNGH-No69Edoo8MzIEoE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "423543563225-4kcs33igf6nkmbbkiu5qaeah1bhauea4.apps.googleusercontent.com",
+              "client_id": "44513076115-9e0iokud7kditbbc2pi1o36afk0cfd15.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

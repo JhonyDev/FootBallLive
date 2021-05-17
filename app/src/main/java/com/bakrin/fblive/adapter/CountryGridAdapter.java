@@ -21,8 +21,8 @@ import com.bakrin.fblive.action.Actions;
 import com.bakrin.fblive.activity.LeagueDetailsActivity;
 import com.bakrin.fblive.listener.CountrySelectListener;
 import com.bakrin.fblive.listener.LeagueHomeItemSelectListener;
-import com.bakrin.fblive.model.Pojo.Country;
-import com.bakrin.fblive.model.Pojo.LeagueListItem;
+import com.bakrin.fblive.model.response.Country;
+import com.bakrin.fblive.model.response.LeagueListItem;
 import com.bakrin.fblive.utils.Utils;
 
 import java.util.ArrayList;

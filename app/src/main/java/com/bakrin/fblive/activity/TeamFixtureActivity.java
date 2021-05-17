@@ -1,5 +1,6 @@
 package com.bakrin.fblive.activity;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +16,9 @@ import com.bakrin.fblive.action.Actions;
 import com.bakrin.fblive.action.DialogType;
 import com.bakrin.fblive.adapter.FixtureListAdapter;
 import com.bakrin.fblive.listener.FixtureItemSelectListener;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.Pojo.LiveFixtureResponse;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.LeagueListResponse;
+import com.bakrin.fblive.model.response.LiveFixtureResponse;
 import com.bakrin.fblive.ui.CustomDialog;
 import com.bakrin.fblive.utils.InternetConnection;
 import com.bakrin.fblive.utils.Utils;

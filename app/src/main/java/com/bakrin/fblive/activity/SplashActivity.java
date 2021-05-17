@@ -4,85 +4,38 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bakrin.fblive.R;
-import com.bakrin.fblive.api.APIManager;
-import com.bakrin.fblive.api.APIService;
 import com.bakrin.fblive.info.Info;
-import com.bakrin.fblive.model.Pojo.CreatedUser;
+import com.bakrin.fblive.service.NotificationService;
 import com.bakrin.fblive.utils.Utils;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.pusher.pushnotifications.BeamsCallback;
-import com.pusher.pushnotifications.PushNotifications;
-import com.pusher.pushnotifications.PusherCallbackError;
-import com.pusher.pushnotifications.auth.AuthData;
-import com.pusher.pushnotifications.auth.AuthDataGetter;
-import com.pusher.pushnotifications.auth.BeamsTokenProvider;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SplashActivity extends AppCompatActivity implements Info {
-
-    String instanceId = "1889a652-be8c-4e56-aed1-04bedd6eff47";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        if (!Utils.getIdInSharedPrefs(this).equals(NO_ID)) {
-            startNewActivity(instanceId, Utils.getIdInSharedPrefs(this));
-            Log.i(TAG, "onCreate: userId " + Utils.getIdInSharedPrefs(this));
-            return;
-        }
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                        return;
-                    }
-                    String token = task.getResult();
-                    Utils.putIdInSharedPrefs(token, this);
-                });
-        Log.i(TAG, "onCreate: " + Utils.getIdInSharedPrefs(this));
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                    Log.i(TAG, "onComplete: " + task.getResult());
+                    Utils.putIdInSharedPrefs(task.getResult(), this);
+                }
+        );
 
 
-        initUserTokenProcess();
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            Intent intent = new Intent(SplashActivity.this, LiveFixtureActivity.class);
+            startActivity(intent);
 
-        final CreatedUser createdUser = new CreatedUser(String.valueOf(System.currentTimeMillis()));
-        APIManager.getRetrofit()
-                .create(APIService.class)
-                .postUserId(createdUser)
-                .enqueue(new Callback<CreatedUser>() {
-                    @Override
-                    public void onResponse(@NotNull Call<CreatedUser> call, @NotNull Response<CreatedUser> response) {
-                        Log.i(TAG, "onResponse: ");
-                        if (response.isSuccessful()) {
-                            Utils.putIdInSharedPrefs(createdUser.getUser_token(), SplashActivity.this);
+            startService(new Intent(SplashActivity.this, NotificationService.class));
 
-                            Log.i(TAG, "onResponse: " + createdUser.getUser_token());
-                            startNewActivity(instanceId, createdUser.user_token);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull Call<CreatedUser> call, @NotNull Throwable t) {
-                        Toast.makeText(SplashActivity.this, "Error communicating with the server", Toast.LENGTH_SHORT).show();
-//                        startNewActivity();
-                        Log.i(TAG, "onFailure: " + t.getMessage());
-                        Log.i(TAG, "onFailure: " + t.getCause());
-                    }
-                });
+            finish();
+        }, 3000);
 
 //        if (InternetConnection.isConnectingToInternet(this)) {
 //
@@ -134,56 +87,6 @@ public class SplashActivity extends AppCompatActivity implements Info {
 //                    getString(R.string.no_internet), DialogType.INFO, null);
 //        }
 
-    }
-
-    private void initUserTokenProcess() {
-        BeamsTokenProvider tokenProvider = new BeamsTokenProvider(
-                "http://165.227.124.80/api/post_user_id",
-                new AuthDataGetter() {
-                    @NotNull
-                    @Override
-                    public AuthData getAuthData() {
-                        // Headers and URL query params your auth endpoint needs to
-                        // request a Beams Token for a given user
-                        HashMap<String, String> headers = new HashMap<>();
-                        // for example:
-                        // headers.put("Authorization", sessionToken);
-                        HashMap<String, String> queryParams = new HashMap<>();
-                        return new AuthData(
-                                headers,
-                                queryParams
-                        );
-                    }
-                }
-        );
-        PushNotifications.setUserId("<USER_ID_GOES_HERE>", tokenProvider, new BeamsCallback<Void, PusherCallbackError>() {
-            @Override
-            public void onSuccess(@NotNull Void... values) {
-                Log.i("PusherBeams", "Successfully authenticated with Pusher Beams");
-                Toast.makeText(SplashActivity.this, "Successful", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(PusherCallbackError error) {
-                Log.i("PusherBeams", "Pusher Beams authentication failed: " + error.getMessage());
-            }
-        });
-
-    }
-
-
-    private void startNewActivity(String instanceId, String userToken) {
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            PushNotifications.start(getApplicationContext(), instanceId);
-            PushNotifications.addDeviceInterest(userToken);
-
-            Log.i(TAG, "startNewActivity: ----------" + userToken + "------------");
-            Intent intent = new Intent(SplashActivity.this, LiveFixtureActivity.class);
-            Log.i(TAG, "startNewActivity: " + Utils.getIdInSharedPrefs(this));
-            startActivity(intent);
-            finish();
-        }, 3000);
 
     }
 }

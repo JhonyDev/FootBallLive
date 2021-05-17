@@ -2,7 +2,11 @@ package com.bakrin.fblive.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.util.Log;
 
 import com.bakrin.fblive.R;
@@ -15,29 +19,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
-
-import static android.content.Context.MODE_PRIVATE;
+import java.util.List;
 
 public class Utils implements Info {
 
-    Activity actContext;
-
     public static void log(String tag, String msg) {
 //        if (BuildConfig.DEBUG) {
-        Log.e(tag, msg);
+            Log.e(tag, msg);
 //        }
     }
-//
-//    public static boolean hasPermissions(Context context, String... permissions) {
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-//            for (String permission : permissions) {
-//                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-//    }
 
     public static void log(String tag, String msg, int type) {
         if (BuildConfig.DEBUG) {
@@ -64,12 +54,30 @@ public class Utils implements Info {
 
         }
     }
+//
+//    public static boolean hasPermissions(Context context, String... permissions) {
+//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+//            for (String permission : permissions) {
+//                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
 
     /**
      * get pixel value from DP
      */
     public static float dpFromPx(final Context context, final float px) {
         return px / context.getResources().getDisplayMetrics().density;
+    }
+
+    /**
+     * get DP value from Pixel
+     */
+    public static float pxFromDp(final Context context, final float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 
 
@@ -113,13 +121,6 @@ public class Utils implements Info {
 //    }
 
     /**
-     * get DP value from Pixel
-     */
-    public static float pxFromDp(final Context context, final float dp) {
-        return dp * context.getResources().getDisplayMetrics().density;
-    }
-
-    /**
      * double string formatter
      */
     public static String doubleFormat(double value) {
@@ -127,6 +128,7 @@ public class Utils implements Info {
         DecimalFormat formatter = new DecimalFormat("#,###,###");
         return formatter.format(value);
     }
+
 
     /**
      * double currency format
@@ -136,6 +138,7 @@ public class Utils implements Info {
         DecimalFormat formatter = new DecimalFormat("#,###,###.##");
         return formatter.format(value);
     }
+
 
     public static void errorResponse(int responseCode, Context context, String json) {
 
@@ -159,6 +162,7 @@ public class Utils implements Info {
 
     }
 
+
     public static void putIdInSharedPrefs(String id, Activity context) {
         SharedPreferences mPrefs = context.getSharedPreferences("IDvalue", 0);
         SharedPreferences.Editor editor = mPrefs.edit();
@@ -172,6 +176,8 @@ public class Utils implements Info {
         Log.i(TAG, "getIdInSharedPrefs: " + id);
         return id;
     }
+
+
 
 
 }

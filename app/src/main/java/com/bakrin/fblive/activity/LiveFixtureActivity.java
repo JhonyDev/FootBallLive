@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,24 +24,22 @@ import com.bakrin.fblive.adapter.CountryGridAdapter;
 import com.bakrin.fblive.adapter.FixtureListAdapter;
 import com.bakrin.fblive.adapter.HomeTeamListAdapter;
 import com.bakrin.fblive.db.table.FixtureTable;
+import com.bakrin.fblive.db.table.NotificationPriorityTable;
 import com.bakrin.fblive.db.table.TeamTable;
 import com.bakrin.fblive.listener.CountrySelectListener;
 import com.bakrin.fblive.listener.FixtureItemSelectListener;
 import com.bakrin.fblive.listener.HomeTeamSelectListener;
-import com.bakrin.fblive.model.Pojo.Country;
-import com.bakrin.fblive.model.Pojo.CountryResponse;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.Pojo.LeagueListItem;
-import com.bakrin.fblive.model.Pojo.LeagueListResponse;
-import com.bakrin.fblive.model.Pojo.LiveFixtureResponse;
-import com.bakrin.fblive.model.Pojo.Team;
+import com.bakrin.fblive.model.response.Country;
+import com.bakrin.fblive.model.response.CountryResponse;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.LeagueListItem;
+import com.bakrin.fblive.model.response.LeagueListResponse;
+import com.bakrin.fblive.model.response.LiveFixtureResponse;
+import com.bakrin.fblive.model.response.Team;
 import com.bakrin.fblive.ui.CustomDialog;
-import com.bakrin.fblive.utils.Config;
 import com.bakrin.fblive.utils.InternetConnection;
 import com.bakrin.fblive.utils.Utils;
 import com.google.firebase.FirebaseApp;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -48,8 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -60,7 +57,7 @@ import retrofit2.Response;
 public class LiveFixtureActivity extends BaseActivity {
 
 
-    public static final String TAG = "tag";
+    public static final String TAG = "///";
     private static boolean handlerFlag = false;
     @BindView(R.id.liveListRecyclerView)
     RecyclerView liveListRecyclerView;
@@ -122,7 +119,6 @@ public class LiveFixtureActivity extends BaseActivity {
     TextView teamEmptyTextView;
     @BindView(R.id.matchEmptyTextView)
     TextView matchEmptyTextView;
-    Runnable r;
     private ArrayList<FixtureItem> fixtureLiveItems;
     private ArrayList<FixtureItem> myMatchFixtureItems;
     private ArrayList<FixtureItem> fixtureByDateItems;
@@ -144,30 +140,17 @@ public class LiveFixtureActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Config.loadCount = 0;
-
         FirebaseApp.initializeApp(this);
         init();
         Log.i(TAG, "onCreate: LiveFixtureActivity");
         //throw new RuntimeException("Test Crash");
-
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Log.i(TAG, "run: ");
-                if (selectedPos == 2)
-                    loadLiveFixture(true);
-            }
-        }, 0, 15 * 1000);
-
-
     }
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_live_fixture;
     }
+
 
     @OnClick(R.id.searchImageView)
     public void onSearchClick() {
@@ -243,8 +226,7 @@ public class LiveFixtureActivity extends BaseActivity {
     }
 
     private void callTimer() {
-        Config.loadCount = 1;
-        r = new Runnable() {
+        final Runnable r = new Runnable() {
             public void run() {
                 Utils.log("THREAD CALL", "<--------------->");
                 Utils.log("THREAD CALL", "Tab : " + selectedPos);
@@ -253,31 +235,23 @@ public class LiveFixtureActivity extends BaseActivity {
                     String date1 = fmt.format(today);
                     String date2 = fmt.format(selectedDate);
                     if (date1.equalsIgnoreCase(date2)) {
-                        if (Config.loadCount < 3) {
-                            Log.i(TAG, "run: Thread continue");
-                            setupDate(true);
-                        } else {
-                            Log.i(TAG, "run: something went wrong");
-                            Toast.makeText(application, "Something wrong", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
+                        setupDate(true);
                     }
 
                 } else if (selectedPos == 2) {
-//                    if (fixtureLiveItems != null) {
-////                        loadLiveFixture(true);
-//                    }
+                    if (fixtureLiveItems != null) {
+                        loadLiveFixture(true);
+                    }
 
                 } else if (selectedPos == 4) {
                     updateSavedGame();
                 }
 
-                handler.postDelayed(this, 3 * 1000);
+                handler.postDelayed(this, 15000);
             }
         };
 
-        handler.postDelayed(r, 15 * 1000);
+        handler.postDelayed(r, 15000);
     }
 
     private void updateSavedGame() {
@@ -351,32 +325,36 @@ public class LiveFixtureActivity extends BaseActivity {
 
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, year, monthOfYear, dayOfMonth) -> {
+                new DatePickerDialog.OnDateSetListener() {
 
-                    try {
-                        fixtureByDateItems.clear();
-                        fixtureByDateListAdapter.notifyDataSetChanged();
-                        selectedDate = fmt.parse(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-                        setupDate(false);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+
+                        try {
+                            fixtureByDateItems.clear();
+                            fixtureByDateListAdapter.notifyDataSetChanged();
+                            selectedDate = fmt.parse(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                            setupDate(false);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-
                 }, mYear, mMonth, mDay);
         datePickerDialog.show();
     }
 
     private void setupDate(boolean isRefresh) {
-        Config.loadCount++;
         dateTextView.setText(fmtShow.format(selectedDate));
         if (isRefresh) {
             if (selectedPos == 1) {
-                loadDateFixture(fmt.format(selectedDate), true);
+                loadDateFixture(fmt.format(selectedDate), isRefresh);
             }
         } else {
             if (fixtureByDateItems.size() == 0) {
                 if (selectedPos == 1) {
-                    loadDateFixture(fmt.format(selectedDate), false);
+                    loadDateFixture(fmt.format(selectedDate), isRefresh);
                 }
             }
         }
@@ -739,19 +717,12 @@ public class LiveFixtureActivity extends BaseActivity {
     /**
      * load date fixture
      */
-
-
     private void loadDateFixture(String date, boolean isRefresh) {
         if (InternetConnection.isConnectingToInternet(this)) {
-            if (!fixtureByDateItems.isEmpty())
-                return;
-//            fixtureByDateItems.addAll(response.body().api.fixtures);
 
-            Log.i(TAG, "loadDateFixture: ");
-
-//            if (!isRefresh) {
-//            }
-            showProgressBar(context, getResources().getString(R.string.loading));
+            if (!isRefresh) {
+                showProgressBar(context, getResources().getString(R.string.loading));
+            }
 
             apiManager.getAPIService().getByDateFixtureList(date).enqueue(
                     new Callback<LiveFixtureResponse>() {
@@ -762,22 +733,31 @@ public class LiveFixtureActivity extends BaseActivity {
                             Log.i(TAG, "onResponse: body  " + response.body());
                             Log.i(TAG, "onResponse: date " + date);
 
-                            if (response.body() == null) {
-                                Toast.makeText(application, "Error Occurred", Toast.LENGTH_SHORT).show();
-//                                if (isRefresh)
-//                                    loadDateFixture(date, false);
+                            if (response.body() == null){
+                                loadDateFixture(date, false);
                                 return;
                             }
 
                             if (response.body().api.fixtures == null) {
                                 Toast.makeText(application, "Error Fetching data from server", Toast.LENGTH_SHORT).show();
+
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(application, "Retrying", Toast.LENGTH_SHORT).show();
+                                        loadDateFixture(date, false);
+                                    }
+                                }, 2 * 1000);
+
                                 return;
                             }
 
 
                             if (response.code() == 200) {
                                 Log.i(TAG, "onResponse: selected position" + selectedPos);
-                                if (selectedPos == 1) {
+                                if (selectedPos == 0) {
+                                } else if (selectedPos == 1) {
                                     if (isRefresh) {
                                         fixtureByDateItems.clear();
                                         fixtureByDateItems.addAll(response.body().api.fixtures);
@@ -860,6 +840,9 @@ public class LiveFixtureActivity extends BaseActivity {
             });
 
 
+
+
+
             fixtureListRecyclerView.setAdapter(fixtureByDateListAdapter);
         }
 
@@ -871,8 +854,6 @@ public class LiveFixtureActivity extends BaseActivity {
     private void loadLiveFixture(boolean isRefresh) {
         if (InternetConnection.isConnectingToInternet(this)) {
 
-            Log.i(TAG, "loadLiveFixture: ");
-
             if (!isRefresh) {
                 showProgressBar(context, getResources().getString(R.string.loading));
             }
@@ -880,25 +861,22 @@ public class LiveFixtureActivity extends BaseActivity {
             apiManager.getAPIService().getLiveFixtureList().enqueue(
                     new Callback<LiveFixtureResponse>() {
                         @Override
-                        public void onResponse(@NotNull Call<LiveFixtureResponse> call, @NotNull Response<LiveFixtureResponse> response) {
+                        public void onResponse(Call<LiveFixtureResponse> call, Response<LiveFixtureResponse> response) {
                             hideProgressBar(context);
 
                             if (response.code() == 200) {
 
                                 if (isRefresh) {
                                     fixtureLiveItems.clear();
-                                    assert response.body() != null;
                                     fixtureLiveItems.addAll(response.body().api.fixtures);
                                     listAdapter.notifyDataSetChanged();
                                 } else {
-                                    assert response.body() != null;
                                     fixtureLiveItems = response.body().api.fixtures;
                                     setupListAdapter();
                                 }
 
                             } else {
                                 try {
-                                    assert response.errorBody() != null;
                                     Utils.errorResponse(response.code(), context, response.errorBody().string());
                                 } catch (IOException e) {
                                     e.printStackTrace();

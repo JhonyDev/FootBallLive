@@ -22,14 +22,12 @@ import com.bakrin.fblive.api.APIManager;
 import com.bakrin.fblive.db.table.FixtureTable;
 import com.bakrin.fblive.db.table.NotificationPriorityTable;
 import com.bakrin.fblive.info.Info;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.Pojo.LiveFixtureResponse;
-import com.bakrin.fblive.model.Pojo.NotificationPriority;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.LiveFixtureResponse;
+import com.bakrin.fblive.model.response.NotificationPriority;
 import com.bakrin.fblive.ui.CustomDialog;
 import com.bakrin.fblive.utils.InternetConnection;
 import com.bakrin.fblive.utils.Utils;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +51,8 @@ public class NotificationService extends Service implements Info {
         context = this;
 
         Log.i(TAG, "onStartCommand: Service Started");
+
+
 
 
         notificationManagerCompat = NotificationManagerCompat.from(context);
@@ -123,7 +123,7 @@ public class NotificationService extends Service implements Info {
             apiManager.getAPIService().getFixtureById(fixtureId).enqueue(
                     new Callback<LiveFixtureResponse>() {
                         @Override
-                        public void onResponse(@NotNull Call<LiveFixtureResponse> call, @NotNull Response<LiveFixtureResponse> response) {
+                        public void onResponse(Call<LiveFixtureResponse> call, Response<LiveFixtureResponse> response) {
                             Log.i(TAG, "onResponse: id: " + fixtureId);
                             if (response.code() == 200) {
                                 assert response.body() != null;
@@ -142,17 +142,49 @@ public class NotificationService extends Service implements Info {
 
                                 FixtureTable fixtureTable = new FixtureTable(context);
 
+                                if (secondHalfResult != null &&
+                                        !fixtureTable.getFinalResultStatus(fixtureItem.fixtureId).equals(SENT_RESULT_STATUS)) {
+                                    checkIfInPriority(1, fixtureID, fixtureItem);
+                                    fixtureTable.updateFixtureFinalResult(fixtureItem.fixtureId, SENT_RESULT_STATUS);
+                                }
 
-                                initFirstHalfResult(firstHalfResult, fixtureItem, fixtureID);
-                                initSecondHalfResult(secondHalfResult, fixtureTable, fixtureItem, fixtureID);
+                                if (firstHalfResult != null) {
+                                    if (Integer.parseInt(fixtureItem.elapsed) < (90 / 2) + 10) {
+                                        checkIfInPriority(2, fixtureID, fixtureItem);
+                                    }
+                                }
+                                if (Integer.parseInt(fixtureItem.elapsed) < 10 && fixtureItem.status.equals(MATCH_STARTED)) {
+                                    Log.i(TAG, "onResponse: Elapsed: " + fixtureItem.elapsed);
+                                    checkIfInPriority(3, fixtureID, fixtureItem);
+                                }
 
-                                initMatchStarted(fixtureItem, fixtureID);
+                                String CARD = "Card";
+                                String GOAL = "Goal";
 
                                 if (fixtureItem.eventsArray == null) {
                                     return;
                                 }
 
-                                initCardsNotification(fixtureItem, fixtureID);
+                                for (int i = 0; i < fixtureItem.eventsArray.size(); i++) {
+                                    Log.i(TAG, "onResponse: Events: " + fixtureItem.eventsArray.get(i).type);
+                                    Log.i(TAG, "onResponse: Detail: " + fixtureItem.eventsArray.get(i).detail);
+                                    if (fixtureItem.eventsArray.get(i).type.equals(CARD)) {
+                                        if (fixtureItem.eventsArray.get(i).detail.equals("Yellow Card")) {
+                                            fixtureItem.numberYellow += 1;
+                                            checkIfInPriority(4, fixtureID, fixtureItem);
+                                        }
+                                        if (fixtureItem.eventsArray.get(i).detail.equals("Red Card")) {
+                                            fixtureItem.numberRed += 1;
+                                            checkIfInPriority(5, fixtureID, fixtureItem);
+                                        }
+                                    }
+                                    if (fixtureItem.eventsArray.get(i).type.equals(GOAL)) {
+                                        checkIfInPriority(6, fixtureID, fixtureItem);
+
+                                    }
+
+                                }
+
 
                             } else {
                                 try {
@@ -179,55 +211,6 @@ public class NotificationService extends Service implements Info {
         }
     }
 
-    private void initCardsNotification(FixtureItem fixtureItem, int fixtureID) {
-        String CARD = "Card";
-        String GOAL = "Goal";
-
-        for (int i = 0; i < fixtureItem.eventsArray.size(); i++) {
-            Log.i(TAG, "onResponse: Events: " + fixtureItem.eventsArray.get(i).type);
-            Log.i(TAG, "onResponse: Detail: " + fixtureItem.eventsArray.get(i).detail);
-            if (fixtureItem.eventsArray.get(i).type.equals(CARD)) {
-                if (fixtureItem.eventsArray.get(i).detail.equals("Yellow Card")) {
-                    fixtureItem.numberYellow += 1;
-                    checkIfInPriority(4, fixtureID, fixtureItem);
-                }
-                if (fixtureItem.eventsArray.get(i).detail.equals("Red Card")) {
-                    fixtureItem.numberRed += 1;
-                    checkIfInPriority(5, fixtureID, fixtureItem);
-                }
-            }
-            if (fixtureItem.eventsArray.get(i).type.equals(GOAL)) {
-                checkIfInPriority(6, fixtureID, fixtureItem);
-
-            }
-
-        }
-    }
-
-    private void initMatchStarted(FixtureItem fixtureItem, int fixtureID) {
-        if (Integer.parseInt(fixtureItem.elapsed) < 10 && fixtureItem.status.equals(MATCH_STARTED)) {
-            Log.i(TAG, "onResponse: Elapsed: " + fixtureItem.elapsed);
-            checkIfInPriority(3, fixtureID, fixtureItem);
-        }
-
-    }
-
-    private void initFirstHalfResult(String firstHalfResult, FixtureItem fixtureItem, int fixtureID) {
-        if (firstHalfResult != null) {
-            if (Integer.parseInt(fixtureItem.elapsed) < (90 / 2) + 10) {
-                checkIfInPriority(2, fixtureID, fixtureItem);
-            }
-        }
-    }
-
-    private void initSecondHalfResult(String secondHalfResult, FixtureTable fixtureTable, FixtureItem fixtureItem, int fixtureID) {
-        if (secondHalfResult != null &&
-                !fixtureTable.getFinalResultStatus(fixtureItem.fixtureId).equals(SENT_RESULT_STATUS)) {
-            checkIfInPriority(1, fixtureID, fixtureItem);
-            fixtureTable.updateFixtureFinalResult(fixtureItem.fixtureId, SENT_RESULT_STATUS);
-        }
-    }
-
     private void checkIfInPriority(int switchValue, int fixtureId, FixtureItem fixtureItem) {
         NotificationPriorityTable notificationPriorityTable = new NotificationPriorityTable(this);
         ArrayList<Integer> integers = notificationPriorityTable.getPriorityData(fixtureId);
@@ -235,38 +218,45 @@ public class NotificationService extends Service implements Info {
             return;
         }
 
+
         switch (switchValue) {
             case 1:
                 if (integers.get(1).equals(1)) {
+                    //TODO: SEND FULL_TIME NOTIFICATION
                     fullTimeNotification(fixtureItem);
                 }
                 break;
             case 2:
                 if (integers.get(2).equals(1)) {
+                    //TODO: SEND HALF_TIME NOTIFICATION
                     halfTimeNotification(fixtureItem);
 
                 }
                 break;
             case 3:
                 if (integers.get(3).equals(1)) {
+                    //TODO: SEND KICK_OFF NOTIFICATION
                     kickOffNotification(fixtureItem);
 
                 }
                 break;
             case 4:
                 if (integers.get(4).equals(1)) {
+                    //TODO: SEND RED_CARD NOTIFICATION
                     redNotification(fixtureItem);
 
                 }
                 break;
             case 5:
                 if (integers.get(5).equals(1)) {
+                    //TODO: SEND YELLOW_CARD NOTIFICATION
                     yellowNotification(fixtureItem);
 
                 }
                 break;
             case 6:
                 if (integers.get(6).equals(1)) {
+                    //TODO: SEND GOAL NOTIFICATION
                     goalNotification(fixtureItem);
                 }
                 break;
@@ -274,7 +264,10 @@ public class NotificationService extends Service implements Info {
     }
 
     private void fullTimeNotification(FixtureItem fixtureItem) {
+
+
         String title = "Full Time";
+
         String subtitle = fixtureItem.homeTeam.teamName + " " +
                 fixtureItem.goalsHomeTeam + "-" + fixtureItem.goalsAwayTeam + " " + fixtureItem.awayTeam.teamName;
 
@@ -317,6 +310,7 @@ public class NotificationService extends Service implements Info {
             NotificationPriorityTable notificationPriorityTable = new NotificationPriorityTable(context);
             notificationPriorityTable.deleteFixture(fixtureItem.fixtureId);
         } else {
+
             String title = "Red Card";
             String subtitle = fixtureItem.homeTeam.teamName + " v " + fixtureItem.awayTeam.teamName;
             String subtitle2 = fixtureItem.elapsed + " min - " + fixtureItem.getNumberOfRedCards();
@@ -361,6 +355,7 @@ public class NotificationService extends Service implements Info {
 //        PendingIntent clickPendingIntent = PendingIntent.getBroadcast(context, 0, clickIntent, 0);
 
 //        collapsedView.setOnClickPendingIntent(R.id.click_field, clickPendingIntent);
+
 
         collapsedView.setTextViewText(R.id.title, title);
         collapsedView.setTextViewText(R.id.subtitle, subTitle);

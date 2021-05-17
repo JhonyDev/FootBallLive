@@ -13,8 +13,8 @@ import com.bakrin.fblive.action.Actions;
 import com.bakrin.fblive.action.DialogType;
 import com.bakrin.fblive.adapter.CountryGridAdapter;
 import com.bakrin.fblive.listener.CountrySelectListener;
-import com.bakrin.fblive.model.Pojo.Country;
-import com.bakrin.fblive.model.Pojo.CountryResponse;
+import com.bakrin.fblive.model.response.Country;
+import com.bakrin.fblive.model.response.CountryResponse;
 import com.bakrin.fblive.ui.CustomDialog;
 import com.bakrin.fblive.utils.InternetConnection;
 import com.bakrin.fblive.utils.Utils;
@@ -61,7 +61,6 @@ public class HomeActivity extends BaseActivity {
         countryListRecyclerView.setLayoutManager(new GridLayoutManager(context, 3));
 
         loadCountries();
-
     }
 
     /**

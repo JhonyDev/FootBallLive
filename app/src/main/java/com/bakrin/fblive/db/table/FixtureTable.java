@@ -5,11 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.bakrin.fblive.db.DatabaseHelper;
-import com.bakrin.fblive.model.Pojo.FixtureItem;
-import com.bakrin.fblive.model.Pojo.League;
-import com.bakrin.fblive.model.Pojo.Team;
+import com.bakrin.fblive.model.response.FixtureItem;
+import com.bakrin.fblive.model.response.League;
+import com.bakrin.fblive.model.response.Team;
 import com.bakrin.fblive.utils.Utils;
 
 import java.util.ArrayList;

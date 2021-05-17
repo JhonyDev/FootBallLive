@@ -1,6 +1,6 @@
 package com.bakrin.fblive.listener;
 
-import com.bakrin.fblive.model.Pojo.LeagueListItem;
+import com.bakrin.fblive.model.response.LeagueListItem;
 
 public interface LeagueHomeItemSelectListener {
 

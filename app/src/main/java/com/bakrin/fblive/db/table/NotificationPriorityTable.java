@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.bakrin.fblive.db.DatabaseHelper;
 import com.bakrin.fblive.info.Info;
-import com.bakrin.fblive.model.Pojo.NotificationPriority;
+import com.bakrin.fblive.model.response.NotificationPriority;
 import com.bakrin.fblive.utils.Utils;
 
 import java.util.ArrayList;
@@ -102,8 +102,6 @@ public class NotificationPriorityTable implements Info {
 
             Utils.log("i", " : " + i);
 
-        } catch (Exception e) {
-            throw new Exception();
         } finally {
             close();
         }
@@ -125,6 +123,7 @@ public class NotificationPriorityTable implements Info {
 
         Log.i(TAG, "updateFixture: " + fixtureId + " " + FULL_TIME_RESULT + " " +
                 HALF_TIME_RESULT + " " + KICK_OFF + " " + RED_CARDS + " " + YELLOW_CARDS + " " + GOALS);
+
 
 
         try {
@@ -151,7 +150,7 @@ public class NotificationPriorityTable implements Info {
         }
     }
 
-    public ArrayList<NotificationPriority> getNotificationPriorityList() {
+    public ArrayList<NotificationPriority> getNotificationPriorityList(){
         Cursor cursor = null;
         try {
             open();
@@ -173,15 +172,15 @@ public class NotificationPriorityTable implements Info {
 
 
             ArrayList<NotificationPriority> notificationPriorityArrayList = new ArrayList<>();
-            while (cursor.moveToNext()) {
+           while (cursor.moveToNext()) {
                 NotificationPriority notificationPriority = new NotificationPriority(
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.fixtureId)),
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FULL_TIME_RESULT)),
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.HALF_TIME_RESULT)),
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KICK_OFF)),
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.RED_CARDS)),
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.YELLOW_CARDS)),
-                        cursor.getInt(cursor.getColumnIndex(DatabaseHelper.GOALS))
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.fixtureId)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.FULL_TIME_RESULT)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.HALF_TIME_RESULT)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KICK_OFF)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.RED_CARDS)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.YELLOW_CARDS)),
+                    cursor.getInt(cursor.getColumnIndex(DatabaseHelper.GOALS))
                 );
                 notificationPriorityArrayList.add(notificationPriority);
             }
@@ -199,6 +198,9 @@ public class NotificationPriorityTable implements Info {
             }
         }
     }
+
+
+
 
 
     public ArrayList<Integer> getPriorityData(int targetFixtureID) {
