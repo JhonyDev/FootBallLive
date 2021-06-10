@@ -1,18 +1,29 @@
 package com.bakrin.fblive.model.response;
 
+import com.google.gson.annotations.SerializedName;
+
 public class NotificationPriority {
+    @SerializedName("user_id")
     String user;
+    @SerializedName("fixture_id")
     int fixtureId;
+    @SerializedName("full_time_result")
     int fullTimeResult;
+    @SerializedName("half_time_result")
     int halfTimeResult;
+    @SerializedName("kick_off")
     int kickOff;
+    @SerializedName("red_cards")
     int redCard;
+    @SerializedName("yellow_cards")
     int yellowCard;
+    @SerializedName("goals")
     int goal;
 
+
     public NotificationPriority(String user, int fixtureId, int fullTimeResult, int halfTimeResult, int kickOff, int redCard, int yellowCard, int goal) {
-        this.fixtureId = fixtureId;
         this.user = user;
+        this.fixtureId = fixtureId;
         this.fullTimeResult = fullTimeResult;
         this.halfTimeResult = halfTimeResult;
         this.kickOff = kickOff;

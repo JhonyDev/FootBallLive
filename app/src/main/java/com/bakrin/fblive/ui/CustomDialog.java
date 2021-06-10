@@ -18,9 +18,6 @@ public class CustomDialog {
 
     private static Dialog dialogProgressbar;
 
-    /**
-     * Custom general dialog show
-     */
     public static void showGeneralDialog(Context context, String title, String msg, DialogType type,
                                          final DialogActionListener actionListener) {
 
@@ -28,12 +25,10 @@ public class CustomDialog {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(msg)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        if (actionListener != null) {
-                            actionListener.onDialogAction(DialogAction.OK);
-                        }
+                .setPositiveButton("OK", (dialog, id) -> {
+                    dialog.dismiss();
+                    if (actionListener != null) {
+                        actionListener.onDialogAction(DialogAction.OK);
                     }
                 });
         AlertDialog dialog = builder.create();
@@ -57,6 +52,7 @@ public class CustomDialog {
                 try {
                     dialogProgressbar.dismiss();
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 dialogProgressbar = null;
             }

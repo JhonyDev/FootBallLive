@@ -74,12 +74,12 @@ public interface APIService {
 //    @GET("/v2/fixtures/h2h/{homeId}/{awayId}")
     Call<H2HResponse> getH2H(@Path("homeId") int homeId, @Path("awayId") int awayId);
 
-    //TODO: RECEIVE NOTIFICATION DATA HERE
-
     @GET("events/{id}")
 //    @GET("/v2/fixtures/id/{id}")
     Call<Events> getEvents(@Path("id") int fixtureId);
 
     @POST("api/post_notification_priority")
     Call<NotificationPriority> postFixtureItem(@Body NotificationPriority fixtureItem);
+
+
 }

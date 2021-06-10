@@ -30,7 +30,6 @@ import com.bakrin.fblive.model.response.NotificationPriority;
 import com.bakrin.fblive.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,7 +123,15 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
                 holder.dateTextView.setText("Live");
                 holder.dateTextView.setTextColor(context.getResources().getColor(R.color.red_text));
-                holder.statusTextView.setText(dataBean.elapsed + "'");
+                String elapsed = dataBean.elapsed + "'";
+                try {
+                    if(!dataBean.status.equals("Halftime"))
+                        elapsed = (Integer.parseInt(dataBean.elapsed) + 2) + "'";
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                holder.statusTextView.setText(elapsed);
                 holder.statusTextView.setTextColor(context.getResources().getColor(R.color.text_green));
 
 

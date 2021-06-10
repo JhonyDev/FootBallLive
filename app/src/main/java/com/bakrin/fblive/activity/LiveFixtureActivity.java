@@ -740,13 +740,11 @@ public class LiveFixtureActivity extends BaseActivity {
 
                             if (response.body().api.fixtures == null) {
                                 Toast.makeText(application, "Error Fetching data from server", Toast.LENGTH_SHORT).show();
-
-
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(application, "Retrying", Toast.LENGTH_SHORT).show();
-                                        loadDateFixture(date, false);
+//                                        Toast.makeText(application, "Retrying", Toast.LENGTH_SHORT).show();
+//                                        loadDateFixture(date, false);
                                     }
                                 }, 2 * 1000);
 
