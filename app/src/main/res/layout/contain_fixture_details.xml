@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/bg_01"
+    tools:context=".activity.FixtureDetailsActivity"
     android:orientation="vertical">
 
     <LinearLayout
@@ -16,7 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/text_green"
+            android:background="@color/white"
             android:orientation="vertical">
 
 
@@ -132,7 +134,8 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="5dp"
-                    app:srcCompat="@drawable/ic_heart_out_line" />
+                    app:srcCompat="@drawable/ic_heart_out_line"
+                    app:tint="@color/black" />
 
                 <LinearLayout
                     android:layout_width="100dp"
@@ -157,7 +160,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text="@string/empty"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -167,6 +170,35 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:id="@+id/ib_notification_bell"
+                            android:layout_width="30sp"
+                            android:layout_height="30sp"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerInside"
+                            android:scaleY="1.2"
+                            android:onClick="initNotifications"
+                            android:src="@drawable/notifications_disabled" />
+
+                        <ImageButton
+                            android:id="@+id/ib_fav"
+                            android:layout_width="30sp"
+                            android:layout_height="30sp"
+                            android:layout_marginStart="20sp"
+                            android:scaleType="fitXY"
+                            android:onClick="initFavs"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/vec_star" />
+
+
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:id="@+id/liveScoreLinearLayout"
@@ -192,7 +224,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textColor="@color/white" />
+                                android:textColor="@color/black" />
 
                             <TextView
                                 style="@style/goal"
@@ -202,7 +234,7 @@
                                 android:layout_marginRight="5dp"
                                 android:layout_weight="1"
                                 android:text=" - "
-                                android:textColor="@color/white" />
+                                android:textColor="@color/black" />
 
                             <TextView
                                 android:id="@+id/awayGoalTextView"
@@ -210,11 +242,22 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textColor="@color/white" />
+                                android:textColor="@color/black" />
                         </LinearLayout>
 
 
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_timer"
+                        style="@style/Label02_Multi_Line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:text="@string/empty"
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:id="@+id/venueTextView"
@@ -225,7 +268,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text="@string/empty"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:id="@+id/timeTextView"
@@ -236,7 +279,7 @@
                         android:layout_marginTop="2dp"
                         android:gravity="center"
                         android:text="@string/empty"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:id="@+id/statusTextView"
@@ -288,7 +331,8 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"
-                    app:srcCompat="@drawable/ic_heart_out_line" />
+                    app:srcCompat="@drawable/ic_heart_out_line"
+                    app:tint="@color/black" />
 
             </LinearLayout>
 
@@ -339,14 +383,14 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="Stats"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/black" />
 
                     <View
                         android:id="@+id/statView"
                         style="@style/Label01_Multi_Line"
                         android:layout_width="wrap_content"
                         android:layout_height="4dp"
-                        android:background="@color/white" />
+                        android:background="@color/black" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -363,14 +407,14 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="H2H"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/black" />
 
                     <View
                         android:id="@+id/h2hView"
                         style="@style/Label01_Multi_Line"
                         android:layout_width="wrap_content"
                         android:layout_height="4dp"
-                        android:background="@color/white"
+                        android:background="@color/black"
                         android:visibility="invisible" />
                 </LinearLayout>
             </LinearLayout>

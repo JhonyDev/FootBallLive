@@ -72,6 +72,8 @@ public class LeagueDetailsActivity extends BaseActivity {
     RecyclerView topRecyclerView;
     @BindView(R.id.topTextView)
     TextView topTextView;
+    @BindView(R.id.tv_timer)
+    TextView tvTimer;
     @BindView(R.id.topView)
     View topView;
     @BindView(R.id.topMainLinearLayout)
@@ -94,6 +96,9 @@ public class LeagueDetailsActivity extends BaseActivity {
 
         init();
         selectTab(0);
+
+
+
     }
 
     @OnClick(R.id.backImageView)

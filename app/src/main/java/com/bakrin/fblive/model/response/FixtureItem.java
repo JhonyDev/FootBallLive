@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
 public class FixtureItem implements Parcelable {
 
@@ -70,12 +71,14 @@ public class FixtureItem implements Parcelable {
     @Expose
     public long event_timestamp;
     public String final_result_cast;
-
     public String numberOfYellowCards;
     public String numberOfRedCards;
     public int numberYellow;
     public int numberRed;
 
+    public String timerString;
+    public int min = 0;
+    public int sec = 0;
 
     public FixtureItem() {
     }
@@ -124,6 +127,82 @@ public class FixtureItem implements Parcelable {
         this.goalsAwayTeam = in.readInt();
         this.event_timestamp = in.readLong();
         eventsArray = in.createTypedArrayList(Events.CREATOR);
+    }
+
+    public static Creator<FixtureItem> getCREATOR() {
+        return CREATOR;
+    }
+
+    public int getLeagueId() {
+        return leagueId;
+    }
+
+    public League getLeague() {
+        return league;
+    }
+
+    public String getRound() {
+        return round;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public String getVenue() {
+        return venue;
+    }
+
+    public Score getScore() {
+        return score;
+    }
+
+    public ArrayList<Events> getEventsArray() {
+        return eventsArray;
+    }
+
+    public String getStatusShort() {
+        return statusShort;
+    }
+
+    public String getElapsed() {
+        return elapsed;
+    }
+
+    public Team getHomeTeam() {
+        return homeTeam;
+    }
+
+    public Team getAwayTeam() {
+        return awayTeam;
+    }
+
+    public int getGoalsHomeTeam() {
+        return goalsHomeTeam;
+    }
+
+    public int getGoalsAwayTeam() {
+        return goalsAwayTeam;
+    }
+
+    public long getEvent_timestamp() {
+        return event_timestamp;
+    }
+
+    public String getFinal_result_cast() {
+        return final_result_cast;
+    }
+
+    public int getNumberYellow() {
+        return numberYellow;
+    }
+
+    public int getNumberRed() {
+        return numberRed;
     }
 
     public String getNumberOfYellowCards() {

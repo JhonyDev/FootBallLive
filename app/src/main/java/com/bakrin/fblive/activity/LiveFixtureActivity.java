@@ -2,16 +2,22 @@ package com.bakrin.fblive.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +30,6 @@ import com.bakrin.fblive.adapter.CountryGridAdapter;
 import com.bakrin.fblive.adapter.FixtureListAdapter;
 import com.bakrin.fblive.adapter.HomeTeamListAdapter;
 import com.bakrin.fblive.db.table.FixtureTable;
-import com.bakrin.fblive.db.table.NotificationPriorityTable;
 import com.bakrin.fblive.db.table.TeamTable;
 import com.bakrin.fblive.listener.CountrySelectListener;
 import com.bakrin.fblive.listener.FixtureItemSelectListener;
@@ -46,7 +51,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -54,10 +63,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LiveFixtureActivity extends BaseActivity {
+public class LiveFixtureActivity extends BaseActivity implements FixtureItemSelectListener {
 
-
-    public static final String TAG = "///";
+    public static final String TAG = "tag";
     private static boolean handlerFlag = false;
     @BindView(R.id.liveListRecyclerView)
     RecyclerView liveListRecyclerView;
@@ -119,6 +127,11 @@ public class LiveFixtureActivity extends BaseActivity {
     TextView teamEmptyTextView;
     @BindView(R.id.matchEmptyTextView)
     TextView matchEmptyTextView;
+    HorizontalScrollView scrollView;
+    int scroll = 0;
+
+    int refreshCount = 0;
+    int sec = 0;
     private ArrayList<FixtureItem> fixtureLiveItems;
     private ArrayList<FixtureItem> myMatchFixtureItems;
     private ArrayList<FixtureItem> fixtureByDateItems;
@@ -126,7 +139,7 @@ public class LiveFixtureActivity extends BaseActivity {
     private int selectedPos = 0;
     private SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat fmtShow = new SimpleDateFormat("EEEE, dd MMM yyyy");
-    private int mYear, mMonth, mDay, mHour, mMinute;
+    private int mYear, mMonth, mDay;
     private Date selectedDate;
     private ArrayList<Country> countryItems;
     private ArrayList<Team> savedTeam;
@@ -136,14 +149,140 @@ public class LiveFixtureActivity extends BaseActivity {
     private FixtureTable fixtureTable;
     private Handler handler;
 
+    public void setWidth(LinearLayout layout) {
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+        params.width = getScreenWidth();
+        layout.setLayoutParams(params);
+    }
+
+    public int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        scrollView = findViewById(R.id.scroll_view);
+
+        new Handler().postDelayed(() -> scrollView.scrollTo(getScreenWidth(), 0), 500);
+
+        scrollView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP)
+                initCheck();
+            return false;
+        });
+
+        scrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scroll = scrollX);
+
+        setWidth(allMainLinearLayout);
+        setWidth(fixtureMainLinearLayout);
+        setWidth(liveMainLinearLayout);
+        setWidth(teamMainLinearLayout);
+        setWidth(matchMainLinearLayout);
 
         FirebaseApp.initializeApp(this);
         init();
         Log.i(TAG, "onCreate: LiveFixtureActivity");
         //throw new RuntimeException("Test Crash");
+
+        Timer timer = new Timer();
+        sec = 0;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    try {
+                        Log.e(TAG, "run: " + fixtureLiveItems);
+                        if (fixtureLiveItems == null)
+                            return;
+
+                        if (selectedPos == 4) {
+                            if (myMatchFixtureItems == null)
+                                return;
+                            initTimer(myMatchFixtureItems);
+                        }
+                        initTimer(fixtureLiveItems);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }, 0, 1000);
+    }
+
+    private void initTimer(ArrayList<FixtureItem> myMatchFixtureItems) {
+        List<FixtureItem> fixtureItems = new ArrayList<>();
+        sec++;
+        for (FixtureItem fixtureItem : myMatchFixtureItems) {
+            fixtureItem.min = Integer.parseInt(fixtureItem.getElapsed()) + 2;
+            if (sec > 60) {
+                sec = 0;
+                fixtureItem.min++;
+            }
+
+            if (fixtureItem.status.equals("Halftime"))
+                fixtureItem.timerString = "HT";
+            else if (fixtureItem.status.equals("Match Finished"))
+                fixtureItem.timerString = "Finished";
+            else
+                fixtureItem.timerString = fixtureItem.min + ":" + sec;
+
+            fixtureItems.add(fixtureItem);
+        }
+
+        if (sec > 60) {
+            sec = 0;
+        }
+
+        myMatchFixtureItems.clear();
+        myMatchFixtureItems.addAll(fixtureItems);
+        if (selectedPos == 4)
+            myMatchAdapter.notifyDataSetChanged();
+        else
+            listAdapter.notifyDataSetChanged();
+
+    }
+
+    private int getDifference(int a, int b) {
+        int dif = a - b;
+
+        if (dif < 0)
+            dif = b - a;
+
+        return dif;
+    }
+
+    private void initCheck() {
+        new Handler().postDelayed(() -> {
+
+            int a = 1;
+            int b = getScreenWidth();
+            int c = getScreenWidth() * 2;
+            int d = getScreenWidth() * 3;
+            int e = getScreenWidth() * 4;
+
+            List<Integer> integers = new ArrayList<>();
+            integers.add(getDifference(a, scroll));
+            integers.add(getDifference(b, scroll));
+            integers.add(getDifference(c, scroll));
+            integers.add(getDifference(d, scroll));
+            integers.add(getDifference(e, scroll));
+
+            int min = Collections.min(integers);
+            int index = 0;
+            for (int i = 0; i < integers.size(); i++) {
+                if (integers.get(i) == min) {
+                    index = i;
+                    break;
+                }
+            }
+            setupTabs(index);
+            scrollView.smoothScrollTo(getScreenWidth() * index, 0);
+        }, 100);
+
     }
 
     @Override
@@ -151,16 +290,12 @@ public class LiveFixtureActivity extends BaseActivity {
         return R.layout.activity_live_fixture;
     }
 
-
     @OnClick(R.id.searchImageView)
     public void onSearchClick() {
         Intent call = new Intent(context, SearchActivity.class);
         startActivity(call);
     }
 
-    /**
-     * initialize component
-     */
     private void init() {
 
 
@@ -244,6 +379,9 @@ public class LiveFixtureActivity extends BaseActivity {
                     }
 
                 } else if (selectedPos == 4) {
+                    if (fixtureLiveItems != null) {
+                        loadLiveFixture(true);
+                    }
                     updateSavedGame();
                 }
 
@@ -362,26 +500,35 @@ public class LiveFixtureActivity extends BaseActivity {
 
     @OnClick(R.id.allLinearLayout)
     public void onAllTabClick() {
+        initScroll(0);
         setupTabs(0);
+    }
+
+    private void initScroll(int i) {
+        scrollView.smoothScrollTo(getScreenWidth() * i, 0);
     }
 
     @OnClick(R.id.fixtureLinearLayout)
     public void onFixturesTabClick() {
+        initScroll(1);
         setupTabs(1);
     }
 
     @OnClick(R.id.liveScoreLinearLayout)
     public void onLiveTabClick() {
+        initScroll(2);
         setupTabs(2);
     }
 
     @OnClick(R.id.teamLinearLayout)
     public void onTeamTabClick() {
+        initScroll(3);
         setupTabs(3);
     }
 
     @OnClick(R.id.gameLinearLayout)
     public void onGameTabClick() {
+        initScroll(4);
         setupTabs(4);
     }
 
@@ -404,11 +551,11 @@ public class LiveFixtureActivity extends BaseActivity {
         teamLinearLayout.setBackgroundColor(getResources().getColor(R.color.white));
         gameLinearLayout.setBackgroundColor(getResources().getColor(R.color.white));
 
-        allMainLinearLayout.setVisibility(View.GONE);
-        fixtureMainLinearLayout.setVisibility(View.GONE);
-        liveMainLinearLayout.setVisibility(View.GONE);
-        teamMainLinearLayout.setVisibility(View.GONE);
-        matchMainLinearLayout.setVisibility(View.GONE);
+        allMainLinearLayout.setVisibility(View.VISIBLE);
+        fixtureMainLinearLayout.setVisibility(View.VISIBLE);
+        liveMainLinearLayout.setVisibility(View.VISIBLE);
+        teamMainLinearLayout.setVisibility(View.VISIBLE);
+        matchMainLinearLayout.setVisibility(View.VISIBLE);
 
         Utils.log("Selcted pos", " : " + pos);
 
@@ -477,28 +624,25 @@ public class LiveFixtureActivity extends BaseActivity {
             matchListRecyclerView.setVisibility(View.VISIBLE);
             matchEmptyTextView.setVisibility(View.GONE);
         }
-        myMatchAdapter = new FixtureListAdapter(true, this, true, myMatchFixtureItems, new FixtureItemSelectListener() {
-            @Override
-            public void onFixtureSelect(int pos, FixtureItem fixtureItem, Actions actions) {
-                if (actions == Actions.VIEW) {
-                    Intent call = new Intent(context, FixtureDetailsActivity.class);
-                    call.putExtra("fixture", fixtureItem);
-                    startActivity(call);
-                }
-                if (actions == Actions.REFRESH) {
-                    refreshMatch(fixtureItem.fixtureId, pos, false);
-                }
-                if (actions == Actions.LIST_REFRESH) {
-                    myMatchFixtureItems.remove(fixtureItem);
-                    myMatchAdapter.notifyDataSetChanged();
-                }
-                if (actions == Actions.VIEW_LEAGUE) {
-                    Intent call = new Intent(context, LeagueDetailsActivity.class);
-                    call.putExtra("name", fixtureItem.league.name);
-                    call.putExtra("id", fixtureItem.leagueId);
-                    call.putExtra("logo", fixtureItem.league.logo);
-                    startActivity(call);
-                }
+        myMatchAdapter = new FixtureListAdapter(true, this, true, myMatchFixtureItems, (pos, fixtureItem, actions) -> {
+            if (actions == Actions.VIEW) {
+                Intent call = new Intent(context, FixtureDetailsActivity.class);
+                call.putExtra("fixture", fixtureItem);
+                startActivity(call);
+            }
+            if (actions == Actions.REFRESH) {
+                refreshMatch(fixtureItem.fixtureId, pos, false);
+            }
+            if (actions == Actions.LIST_REFRESH) {
+                myMatchFixtureItems.remove(fixtureItem);
+                myMatchAdapter.notifyDataSetChanged();
+            }
+            if (actions == Actions.VIEW_LEAGUE) {
+                Intent call = new Intent(context, LeagueDetailsActivity.class);
+                call.putExtra("name", fixtureItem.league.name);
+                call.putExtra("id", fixtureItem.leagueId);
+                call.putExtra("logo", fixtureItem.league.logo);
+                startActivity(call);
             }
         });
         matchListRecyclerView.setAdapter(myMatchAdapter);
@@ -590,7 +734,6 @@ public class LiveFixtureActivity extends BaseActivity {
      */
     private void loadCountries() {
         if (InternetConnection.isConnectingToInternet(this)) {
-
             showProgressBar(context, getResources().getString(R.string.loading));
             apiManager.getAPIService().getCountiesList().enqueue(
                     new Callback<CountryResponse>() {
@@ -663,7 +806,6 @@ public class LiveFixtureActivity extends BaseActivity {
         todayListRecyclerView.setAdapter(gridAdapter);
     }
 
-
     /**
      * download league details
      */
@@ -733,7 +875,7 @@ public class LiveFixtureActivity extends BaseActivity {
                             Log.i(TAG, "onResponse: body  " + response.body());
                             Log.i(TAG, "onResponse: date " + date);
 
-                            if (response.body() == null){
+                            if (response.body() == null) {
                                 loadDateFixture(date, false);
                                 return;
                             }
@@ -818,27 +960,7 @@ public class LiveFixtureActivity extends BaseActivity {
             }
         } else {
 
-            fixtureByDateListAdapter = new FixtureListAdapter(true, this, fixtureByDateItems, new FixtureItemSelectListener() {
-                @Override
-                public void onFixtureSelect(int pos, FixtureItem fixtureItem, Actions actions) {
-                    if (actions == Actions.VIEW) {
-                        Intent call = new Intent(context, FixtureDetailsActivity.class);
-                        call.putExtra("fixture", fixtureItem);
-                        startActivity(call);
-                    }
-                    if (actions == Actions.VIEW_LEAGUE) {
-                        Intent call = new Intent(context, LeagueDetailsActivity.class);
-                        call.putExtra("name", fixtureItem.league.name);
-                        call.putExtra("id", fixtureItem.leagueId);
-                        call.putExtra("logo", fixtureItem.league.logo);
-                        startActivity(call);
-                    }
-
-                }
-            });
-
-
-
+            fixtureByDateListAdapter = new FixtureListAdapter(true, this, fixtureByDateItems, this);
 
 
             fixtureListRecyclerView.setAdapter(fixtureByDateListAdapter);
@@ -846,9 +968,6 @@ public class LiveFixtureActivity extends BaseActivity {
 
     }
 
-    /**
-     * load live fixture
-     */
     private void loadLiveFixture(boolean isRefresh) {
         if (InternetConnection.isConnectingToInternet(this)) {
 
@@ -868,6 +987,7 @@ public class LiveFixtureActivity extends BaseActivity {
                                     fixtureLiveItems.clear();
                                     fixtureLiveItems.addAll(response.body().api.fixtures);
                                     listAdapter.notifyDataSetChanged();
+                                    refreshCount++;
                                 } else {
                                     fixtureLiveItems = response.body().api.fixtures;
                                     setupListAdapter();
@@ -965,5 +1085,25 @@ public class LiveFixtureActivity extends BaseActivity {
 
         });
         liveListRecyclerView.setAdapter(listAdapter);
+    }
+
+
+    @Override
+    public void onFixtureSelect(int pos, FixtureItem fixtureItem, Actions actions) {
+        Log.i(TAG, "onFixtureSelect: ");
+        if (actions == Actions.VIEW) {
+            Intent call = new Intent(context, FixtureDetailsActivity.class);
+            call.putExtra("fixture", fixtureItem);
+            startActivity(call);
+        }
+        if (actions == Actions.VIEW_LEAGUE) {
+            Intent call = new Intent(context, LeagueDetailsActivity.class);
+            call.putExtra("name", fixtureItem.league.name);
+            call.putExtra("id", fixtureItem.leagueId);
+            call.putExtra("logo", fixtureItem.league.logo);
+            startActivity(call);
+        }
+
+
     }
 }

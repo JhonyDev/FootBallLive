@@ -1,11 +1,17 @@
 package com.bakrin.fblive.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +26,17 @@ import com.bakrin.fblive.adapter.CardListAdapter;
 import com.bakrin.fblive.adapter.FixtureGoalListAdapter;
 import com.bakrin.fblive.adapter.FixtureListAdapter;
 import com.bakrin.fblive.adapter.SubstListAdapter;
+import com.bakrin.fblive.api.APIManager;
+import com.bakrin.fblive.api.APIService;
+import com.bakrin.fblive.db.table.FixtureTable;
+import com.bakrin.fblive.db.table.NotificationPriorityTable;
 import com.bakrin.fblive.db.table.TeamTable;
+import com.bakrin.fblive.info.Info;
 import com.bakrin.fblive.model.response.FixtureItem;
 import com.bakrin.fblive.model.response.FixtureStatEvent;
 import com.bakrin.fblive.model.response.FixtureStats;
 import com.bakrin.fblive.model.response.H2HResponse;
+import com.bakrin.fblive.model.response.NotificationPriority;
 import com.bakrin.fblive.model.response.StatsResponse;
 import com.bakrin.fblive.ui.CustomDialog;
 import com.bakrin.fblive.utils.InternetConnection;
@@ -36,6 +48,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -137,6 +151,8 @@ public class FixtureDetailsActivity extends BaseActivity {
     TextView homeRedCardTextView;
     @BindView(R.id.awayRedCardTextView)
     TextView awayRedCardTextView;
+    @BindView(R.id.tv_timer)
+    TextView tvTimer;
     @BindView(R.id.matchStatsLinearLayout)
     LinearLayout matchStatsLinearLayout;
     @BindView(R.id.h2hListRecyclerView)
@@ -145,6 +161,24 @@ public class FixtureDetailsActivity extends BaseActivity {
     ImageView homeSaveImageView;
     @BindView(R.id.awaySaveImageView)
     ImageView awaySaveImageView;
+
+    @BindView(R.id.ib_notification_bell)
+    ImageButton notificationBellIcon;
+
+    @BindView(R.id.ib_fav)
+    ImageButton fav;
+
+    FixtureTable table;
+
+
+    int fullTimeResultInt = 0;
+    int halfTimeResultInt = 0;
+    int kickOffInt = 0;
+    int redCardsInt = 0;
+    int yellowCardsInt = 0;
+    int goalsInt = 0;
+    PopupWindow mypopupWindow;
+    NotificationPriorityTable notificationPriorityTable;
     private FixtureItem fixture;
     private SimpleDateFormat fmt;
     private SimpleDateFormat apiFmt;
@@ -166,9 +200,74 @@ public class FixtureDetailsActivity extends BaseActivity {
         fmt = new SimpleDateFormat("EEE dd MMM, yyyy hh:mm aaa");
         apiFmt = new SimpleDateFormat("yyyy-MM-dd");
         init();
-        Log.i(TAG, "onCreate: FixtureDetailsActivity" );
+        Log.i(TAG, "onCreate: FixtureDetailsActivity");
+        table = new FixtureTable(this);
+        initTimer();
+
+        if (table.getTeamStatus(fixture.fixtureId) > 0) {
+            fav.setImageDrawable(context.getResources().getDrawable(R.drawable.vec_star_fill));
+        } else {
+            fav.setImageDrawable(context.getResources().getDrawable(R.drawable.vec_star));
+        }
+
+        notificationPriorityTable = new NotificationPriorityTable(context);
 
 
+        boolean isNotificationEnabled = false;
+        ArrayList<Integer> integers = notificationPriorityTable.getPriorityData(fixture.getFixtureId());
+        for (int i = 0; i < integers.size(); i++) {
+            if (integers.get(i).equals(1)) {
+                isNotificationEnabled = true;
+                break;
+            }
+        }
+
+        for (int i = 0; i < integers.size(); i++) {
+            Log.i(TAG, "onCreate: " + integers.get(i));
+            if (integers.get(i) == 1) {
+                isNotificationEnabled = true;
+                break;
+            }
+        }
+
+        if (isNotificationEnabled) {
+            notificationBellIcon.setBackgroundResource(R.drawable.notificications_enabled);
+        } else {
+            notificationBellIcon.setBackgroundResource(R.drawable.notifications_disabled);
+        }
+        setPopUpWindow();
+
+    }
+
+    private void initTimer() {
+        String strElapsed = fixture.getElapsed();
+        try {
+            Log.i(TAG, "initTimer: " + fixture.elapsed + 2);
+            final int[] sec = {0};
+            final int[] min = {Integer.parseInt(strElapsed) + 2};
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(() -> {
+                        String timer = min[0] + ":" + sec[0];
+
+                        if (sec[0] > 60) {
+                            sec[0] = 0;
+                            min[0]++;
+                        }
+                        tvTimer.setText(timer);
+                        sec[0]++;
+
+                    });
+                }
+            }, 0, 1000);
+
+
+        } catch (Exception e) {
+            Log.i(TAG, "initTimer: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -545,8 +644,232 @@ public class FixtureDetailsActivity extends BaseActivity {
     /**
      * update goal list adapter
      */
+
     private void updateGoalList() {
         goalListAdapter = new FixtureGoalListAdapter(this, goalList, fixture.homeTeam.teamId, fixture.awayTeam.teamId);
         goalsRecyclerView.setAdapter(goalListAdapter);
+    }
+
+    private void initFav() {
+        FixtureItem item = fixture;
+        item.final_result_cast = Info.NOT_SENT_RESULT_STATUS;
+        if (table.getTeamStatus(item.fixtureId) > 0)
+            table.deleteFixture(item.fixtureId);
+        else
+            table.insertFixture(item);
+
+
+        if (table.getTeamStatus(fixture.fixtureId) > 0)
+            fav.setImageDrawable(context.getResources().getDrawable(R.drawable.vec_star_fill));
+        else
+            fav.setImageDrawable(context.getResources().getDrawable(R.drawable.vec_star));
+
+
+    }
+
+    private void setPopUpWindow() {
+        fullTimeResultInt = 0;
+        halfTimeResultInt = 0;
+        kickOffInt = 0;
+        redCardsInt = 0;
+        yellowCardsInt = 0;
+        goalsInt = 0;
+
+        Log.i(TAG, "setPopUpWindow: Setting up popup Window");
+        LayoutInflater inflater = (LayoutInflater)
+                context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.popup, null);
+
+        notificationPriorityTable = new NotificationPriorityTable(context);
+        Log.i(TAG, "setPopUpWindow: " + fixture.getFixtureId());
+
+        ArrayList<Integer> arrayList = notificationPriorityTable.getPriorityData(fixture.getFixtureId());
+
+        mypopupWindow = new PopupWindow(view, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
+
+        CheckBox fullTimeResult = view.findViewById(R.id.full_time_result);
+        CheckBox halfTimeResult = view.findViewById(R.id.half_time_result);
+        CheckBox kickOff = view.findViewById(R.id.kick_off);
+        CheckBox redCards = view.findViewById(R.id.red_cards);
+        CheckBox yellowCards = view.findViewById(R.id.yellow_cards);
+        CheckBox goals = view.findViewById(R.id.goals);
+        CheckBox notifications = view.findViewById(R.id.notification);
+
+        fullTimeResult.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                fullTimeResultInt = 1;
+            } else {
+                fullTimeResultInt = 0;
+            }
+        });
+        halfTimeResult.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                halfTimeResultInt = 1;
+            } else {
+                halfTimeResultInt = 0;
+            }
+        });
+        kickOff.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                kickOffInt = 1;
+            } else {
+                kickOffInt = 0;
+            }
+        });
+        redCards.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                redCardsInt = 1;
+            } else {
+                redCardsInt = 0;
+            }
+        });
+        yellowCards.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                yellowCardsInt = 1;
+            } else {
+                yellowCardsInt = 0;
+            }
+        });
+        goals.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                goalsInt = 1;
+            } else {
+                goalsInt = 0;
+            }
+        });
+        mypopupWindow.setOnDismissListener(() -> {
+
+            if (fullTimeResultInt == 0
+                    && halfTimeResultInt == 0
+                    && kickOffInt == 0
+                    && redCardsInt == 0
+                    && yellowCardsInt == 0
+                    && goalsInt == 0) {
+                notificationBellIcon.setImageResource(R.drawable.notifications_disabled);
+                notificationPriorityTable.deleteFixture(fixture.getFixtureId());
+
+            } else {
+                try {
+                    notificationPriorityTable.deleteFixture(fixture.getFixtureId());
+                    notificationPriorityTable.insertFixture(fixture.getFixtureId(),
+                            fullTimeResultInt, halfTimeResultInt, kickOffInt, redCardsInt, yellowCardsInt, goalsInt);
+                    Log.i(TAG, "setPopUpWindow: inserted");
+                } catch (Exception e) {
+                    Toast.makeText(context, "Error updating", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "setPopUpWindow: updated");
+                }
+
+
+                notificationBellIcon.setImageResource(R.drawable.notificications_enabled);
+            }
+            NotificationPriority notificationPriority = new NotificationPriority(
+                    Utils.getIdInSharedPrefs(FixtureDetailsActivity.this),
+                    fixture.getFixtureId(),
+                    fullTimeResultInt,
+                    halfTimeResultInt,
+                    kickOffInt,
+                    redCardsInt,
+                    yellowCardsInt,
+                    goalsInt
+
+            );
+            if (!Utils.getIdInSharedPrefs(FixtureDetailsActivity.this).equals(Info.NO_ID)) {
+                Toast.makeText(FixtureDetailsActivity.this, "Posting user Id", Toast.LENGTH_SHORT).show();
+                APIManager.getRetrofit()
+                        .create(APIService.class)
+                        .postFixtureItem(notificationPriority)
+                        .enqueue(new Callback<NotificationPriority>() {
+                            @Override
+                            public void onResponse(Call<NotificationPriority> call, Response<NotificationPriority> response) {
+                                Log.i(TAG, "onResponse: " + response.body());
+                                Log.i(TAG, "onResponse: " + response.message());
+                                Log.i(TAG, "onResponse: " + response.errorBody());
+                                Log.i(TAG, "onResponse: " + response.code());
+                                Log.i(TAG, "onResponse: " + response.raw());
+                                if (response.isSuccessful()) {
+                                    Toast.makeText(FixtureDetailsActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                                    Log.i(TAG, "onResponse: " + response.message());
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<NotificationPriority> call, Throwable t) {
+                                Toast.makeText(FixtureDetailsActivity.this, "Error communicating server", Toast.LENGTH_SHORT).show();
+                                Log.i(TAG, "onFailure: " + t.getMessage());
+                                Log.i(TAG, "onFailure: " + t.getCause());
+                            }
+                        });
+            }
+            Log.i(TAG, "setPopUpWindow: Data Should be written");
+        });
+
+        if (arrayList.size() < 1) {
+            return;
+        }
+
+        boolean isNotificationEnabled = false;
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (arrayList.get(i).equals(1)) {
+                isNotificationEnabled = true;
+                break;
+            }
+        }
+
+        if (isNotificationEnabled)
+            notificationBellIcon.setImageResource(R.drawable.notificications_enabled);
+        else
+            notificationBellIcon.setImageResource(R.drawable.notifications_disabled);
+
+
+        notifications.setChecked(isNotificationEnabled);
+
+        fullTimeResult.setChecked(arrayList.get(1).equals(1));
+        if (arrayList.get(1).equals(1)) {
+            fullTimeResultInt = 1;
+        } else {
+            fullTimeResultInt = 0;
+        }
+        halfTimeResult.setChecked(arrayList.get(2).equals(1));
+        if (arrayList.get(2).equals(1)) {
+            halfTimeResultInt = 1;
+        } else {
+            halfTimeResultInt = 0;
+        }
+        kickOff.setChecked(arrayList.get(3).equals(1));
+        if (arrayList.get(3).equals(1)) {
+            kickOffInt = 1;
+        } else {
+            kickOffInt = 0;
+        }
+        redCards.setChecked(arrayList.get(4).equals(1));
+        if (arrayList.get(4).equals(1)) {
+            redCardsInt = 1;
+        } else {
+            redCardsInt = 0;
+        }
+        yellowCards.setChecked(arrayList.get(5).equals(1));
+        if (arrayList.get(5).equals(1)) {
+            yellowCardsInt = 1;
+        } else {
+            yellowCardsInt = 0;
+        }
+        goals.setChecked(arrayList.get(6).equals(1));
+        if (arrayList.get(6).equals(1)) {
+            goalsInt = 1;
+        } else {
+            goalsInt = 0;
+        }
+
+
+    }
+
+    public void initNotifications(View view) {
+        mypopupWindow.showAsDropDown(view, -500, 0);
+
+    }
+
+    public void initFavs(View view) {
+        initFav();
     }
 }

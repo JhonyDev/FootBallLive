@@ -19,4 +19,5 @@
     <string name="all_games">All Games</string>
     <string name="fixtures">Fixtures</string>
     <string name="search_hint">Type your search here</string>
+    <string name="country_name">Country Name</string>
 </resources>

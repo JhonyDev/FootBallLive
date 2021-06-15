@@ -31,7 +31,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CountryGridAdapter extends RecyclerView.Adapter<CountryGridAdapter.ViewHolder>implements Filterable {
+public class CountryGridAdapter extends RecyclerView.Adapter<CountryGridAdapter.ViewHolder> implements Filterable {
 
     private Activity context;
     private ArrayList<Country> dataList;
@@ -70,12 +70,6 @@ public class CountryGridAdapter extends RecyclerView.Adapter<CountryGridAdapter.
         }
     };
 
-    @Override
-    public Filter getFilter() {
-        return exampleFilter;
-    }
-
-
     public CountryGridAdapter(Activity context, ArrayList<Country> dataList,
                               CountrySelectListener listener) {
         this.context = context;
@@ -85,6 +79,10 @@ public class CountryGridAdapter extends RecyclerView.Adapter<CountryGridAdapter.
         this.dataFullList = new ArrayList<>(dataList);
     }
 
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
 
     public void setSelectedPos(int selectedPos) {
         this.selectedPos = selectedPos;
@@ -103,23 +101,17 @@ public class CountryGridAdapter extends RecyclerView.Adapter<CountryGridAdapter.
 
         holder.nameTextView.setText(dataBean.getCountry());
         holder.mainLinearLayout.setTag(position);
-        holder.mainLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    int pos = (int) view.getTag();
-                    listener.onCountrySelect(dataList.get(pos), pos, Actions.VIEW);
-                }
+        holder.mainLinearLayout.setOnClickListener(view -> {
+            if (listener != null) {
+                int pos = (int) view.getTag();
+                listener.onCountrySelect(dataList.get(pos), pos, Actions.VIEW);
             }
         });
-        holder.downImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    String pos = (String) view.getTag();
-                    Utils.log("TAG"," : "+pos);
+        holder.downImageView.setOnClickListener(view -> {
+            if (listener != null) {
+                String pos = (String) view.getTag();
+                Utils.log("TAG", " : " + pos);
 //                    listener.onCountrySelect(dataList.get(pos), pos,Actions.CHANGE);
-                }
             }
         });
 
