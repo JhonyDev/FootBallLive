@@ -22,7 +22,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeLeagueListAdapter   extends RecyclerView.Adapter<HomeLeagueListAdapter.ViewHolder> {
+public class HomeLeagueListAdapter extends RecyclerView.Adapter<HomeLeagueListAdapter.ViewHolder> {
 
     private Activity context;
     private ArrayList<LeagueListItem> dataList;

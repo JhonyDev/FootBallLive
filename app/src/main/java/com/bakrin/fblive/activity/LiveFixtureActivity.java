@@ -63,7 +63,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LiveFixtureActivity extends BaseActivity implements FixtureItemSelectListener {
+public class LiveFixtureActivity extends BaseActivity implements FixtureItemSelectListener, View.OnTouchListener {
 
     public static final String TAG = "tag";
     private static boolean handlerFlag = false;
@@ -132,6 +132,8 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
 
     int refreshCount = 0;
     int sec = 0;
+    float initialY;
+    float initialX;
     private ArrayList<FixtureItem> fixtureLiveItems;
     private ArrayList<FixtureItem> myMatchFixtureItems;
     private ArrayList<FixtureItem> fixtureByDateItems;
@@ -167,12 +169,6 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
         scrollView = findViewById(R.id.scroll_view);
 
         new Handler().postDelayed(() -> scrollView.scrollTo(getScreenWidth(), 0), 500);
-
-        scrollView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP)
-                initCheck();
-            return false;
-        });
 
         scrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> scroll = scrollX);
 
@@ -211,6 +207,18 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
                 });
             }
         }, 0, 1000);
+
+        allEmptyTextView.setOnTouchListener(this);
+        fixtureEmptyTextView.setOnTouchListener(this);
+        liveEmptyTextView.setOnTouchListener(this);
+        teamEmptyTextView.setOnTouchListener(this);
+        matchEmptyTextView.setOnTouchListener(this);
+
+        scrollView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP)
+                initCheck();
+            return false;
+        });
     }
 
     private void initTimer(ArrayList<FixtureItem> myMatchFixtureItems) {
@@ -316,6 +324,7 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
         liveListRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         matchListRecyclerView.setHasFixedSize(true);
+
         LinearLayoutManager llmMatch = new LinearLayoutManager(context);
         llmMatch.setOrientation(LinearLayoutManager.VERTICAL);
         matchListRecyclerView.setLayoutManager(llmMatch);
@@ -743,7 +752,11 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
 
                             if (response.code() == 200) {
                                 countryItems = response.body().getApi().getCountries();
-                                setupCountryAdapter();
+                                try {
+                                    setupCountryAdapter();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             } else {
                                 try {
                                     Utils.errorResponse(response.code(), context, response.errorBody().string());
@@ -935,19 +948,55 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
         }
     }
 
+//    /**
+//     * setup date view
+//     */
+//    private void setupTodayListAdapter() {
+//        if (fixtureTodayItems == null) {
+//            todayListRecyclerView.setVisibility(View.GONE);
+//            allEmptyTextView.setVisibility(View.VISIBLE);
+//        } else if (fixtureTodayItems.size() == 0) {
+//            todayListRecyclerView.setVisibility(View.GONE);
+//            allEmptyTextView.setVisibility(View.VISIBLE);
+//        } else {
+//            todayListRecyclerView.setVisibility(View.VISIBLE);
+//            allEmptyTextView.setVisibility(View.GONE);
+//        }
+//
+//        todayListAdapter = new FixtureListAdapter(this, fixtureTodayItems, new FixtureItemSelectListener() {
+//            @Override
+//            public void onFixtureSelect(int pos, FixtureItem fixtureItem, Actions actions) {
+//                if (actions == Actions.VIEW) {
+//                    Intent call = new Intent(context, FixtureDetailsActivity.class);
+//                    call.putExtra("fixture", fixtureItem);
+//                    startActivity(call);
+//                }
+//                if (actions == Actions.VIEW_LEAGUE) {
+//                    Intent call = new Intent(context, LeagueDetailsActivity.class);
+//                    call.putExtra("name", fixtureItem.league.name);
+//                    call.putExtra("id", fixtureItem.leagueId);
+//                    call.putExtra("logo", fixtureItem.league.logo);
+//                    startActivity(call);
+//                }
+//
+//            }
+//        });
+//        todayListRecyclerView.setAdapter(todayListAdapter);
+//    }
+
     /**
      * by date fixture data adapter
      */
     private void setUpFixtureByDateListAdapter(boolean isRefresh) {
         if (fixtureByDateItems == null) {
             fixtureListRecyclerView.setVisibility(View.GONE);
-            fixtureEmptyTextView.setVisibility(View.VISIBLE);
+            fixtureEmptyTextView.setAlpha(1);
         } else if (fixtureByDateItems.size() == 0) {
             fixtureListRecyclerView.setVisibility(View.GONE);
-            fixtureEmptyTextView.setVisibility(View.VISIBLE);
+            fixtureEmptyTextView.setAlpha(1);
         } else {
             fixtureListRecyclerView.setVisibility(View.VISIBLE);
-            fixtureEmptyTextView.setVisibility(View.GONE);
+            fixtureEmptyTextView.setAlpha(0);
         }
 
         if (fixtureByDateItems != null) {
@@ -1018,42 +1067,6 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
         }
     }
 
-//    /**
-//     * setup date view
-//     */
-//    private void setupTodayListAdapter() {
-//        if (fixtureTodayItems == null) {
-//            todayListRecyclerView.setVisibility(View.GONE);
-//            allEmptyTextView.setVisibility(View.VISIBLE);
-//        } else if (fixtureTodayItems.size() == 0) {
-//            todayListRecyclerView.setVisibility(View.GONE);
-//            allEmptyTextView.setVisibility(View.VISIBLE);
-//        } else {
-//            todayListRecyclerView.setVisibility(View.VISIBLE);
-//            allEmptyTextView.setVisibility(View.GONE);
-//        }
-//
-//        todayListAdapter = new FixtureListAdapter(this, fixtureTodayItems, new FixtureItemSelectListener() {
-//            @Override
-//            public void onFixtureSelect(int pos, FixtureItem fixtureItem, Actions actions) {
-//                if (actions == Actions.VIEW) {
-//                    Intent call = new Intent(context, FixtureDetailsActivity.class);
-//                    call.putExtra("fixture", fixtureItem);
-//                    startActivity(call);
-//                }
-//                if (actions == Actions.VIEW_LEAGUE) {
-//                    Intent call = new Intent(context, LeagueDetailsActivity.class);
-//                    call.putExtra("name", fixtureItem.league.name);
-//                    call.putExtra("id", fixtureItem.leagueId);
-//                    call.putExtra("logo", fixtureItem.league.logo);
-//                    startActivity(call);
-//                }
-//
-//            }
-//        });
-//        todayListRecyclerView.setAdapter(todayListAdapter);
-//    }
-
     /**
      * live list adapter
      */
@@ -1087,7 +1100,6 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
         liveListRecyclerView.setAdapter(listAdapter);
     }
 
-
     @Override
     public void onFixtureSelect(int pos, FixtureItem fixtureItem, Actions actions) {
         Log.i(TAG, "onFixtureSelect: ");
@@ -1105,5 +1117,45 @@ public class LiveFixtureActivity extends BaseActivity implements FixtureItemSele
         }
 
 
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                initialY = event.getY();
+                initialX = event.getX();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float x = event.getX();
+                float y = event.getY();
+                float dY = initialY - y;
+                float dX = x - initialX;
+
+                if (dY < 0)
+                    dY = dY * -1;
+
+                if (dX < 0)
+                    dX = dX * -1;
+
+
+                Log.i(TAG, "onTouch: D X - " + dX);
+                Log.i(TAG, "onTouch: D Y - " + dY * 1.8);
+                Log.i(TAG, "onTouch:-------------------------------------");
+
+//                v.getParent().requestDisallowInterceptTouchEvent(dY * 1.8 > dX);
+                break;
+
+            case MotionEvent.ACTION_UP:
+                // Allow ListView to intercept touch events.
+                v.getParent().requestDisallowInterceptTouchEvent(false);
+                break;
+        }
+        v.getParent().requestDisallowInterceptTouchEvent(true);
+
+        // Handle HorizontalScrollView touch events.
+        v.onTouchEvent(event);
+        return false;
     }
 }

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/action_bar.xml" value="0.25" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/activity_home.xml" value="0.18703703703703703" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/contain_fixture_details.xml" value="0.25" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/contain_home.xml" value="0.25" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/contain_league_details.xml" value="0.25" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/contain_live_fixture.xml" value="0.18478260869565216" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/layout_1.xml" value="0.25" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/layout_2.xml" value="0.25" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/layout_3.xml" value="0.16979166666666667" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/list_view_fixture.xml" value="0.264" />
+        <entry key="..\:/Users/Jhony Dev/AndroidStudioProjects/FootBallLive/app/src/main/res/layout/nav_menu.xml" value="0.25" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

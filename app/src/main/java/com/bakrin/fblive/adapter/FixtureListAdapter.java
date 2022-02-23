@@ -126,16 +126,12 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
                 holder.statusTextView.setText(dataBean.timerString);
                 holder.statusTextView.setTextColor(context.getResources().getColor(R.color.text_green));
-
-
             } else {
-
                 Date api = fmt.parse(dataBean.eventDate);
 
 //                Utils.log("TIME DATE"," : "+dataBean.eventDate);
 //                Utils.log("TIME",fmtTimeShow.format(fmtMain.parse(dataBean.eventDate)));
 //                Utils.log("TIMESTAMP",new Date(dataBean.event_timestamp).toString());
-
 
                 holder.statusTextView.setText(time.format(new Date(dataBean.event_timestamp * 1000)));
                 holder.statusTextView.setTextColor(context.getResources().getColor(R.color.home_text_gray));
@@ -149,11 +145,10 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
                     if (DateUtils.isToday(api.getTime())) {
                         holder.dateTextView.setText("Today");
-                        holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_gray));
                     } else {
                         holder.dateTextView.setText(fmtShow.format(api));
-                        holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_gray));
                     }
+                    holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_gray));
                 } else {
                     if (dataBean.statusShort.equalsIgnoreCase("CANC") ||
                             dataBean.statusShort.equalsIgnoreCase("PST") ||
@@ -171,11 +166,10 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
                     }
                     if (DateUtils.isToday(api.getTime())) {
                         holder.dateTextView.setText("Today");
-                        holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_green));
                     } else {
                         holder.dateTextView.setText(fmtShow.format(api));
-                        holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_green));
                     }
+                    holder.dateTextView.setTextColor(context.getResources().getColor(R.color.text_green));
                 }
             }
         } catch (ParseException e) {
@@ -193,14 +187,11 @@ public class FixtureListAdapter extends RecyclerView.Adapter<FixtureListAdapter.
 
 
         holder.refreshImageView.setTag(position);
-        holder.refreshImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
+        holder.refreshImageView.setOnClickListener(view -> {
+            if (listener != null) {
 
-                    int pos = (int) view.getTag();
-                    listener.onFixtureSelect(pos, dataList.get(pos), Actions.REFRESH);
-                }
+                int pos = (int) view.getTag();
+                listener.onFixtureSelect(pos, dataList.get(pos), Actions.REFRESH);
             }
         });
 

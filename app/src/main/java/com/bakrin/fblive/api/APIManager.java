@@ -43,7 +43,7 @@ public class APIManager {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://165.227.124.80/")
+                    .baseUrl("http://147.182.132.150/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(okHttpClient)
                     .build();
